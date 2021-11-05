@@ -1,0 +1,16 @@
+#!/bin/bash
+
+_os=`uname`
+_path=`pwd`
+_dir=`dirname $_path`
+
+sed "s:{APP_PATH}:${_dir}:g" $_dir/scripts/init.d/gop2p.tpl > $_dir/scripts/init.d/gop2p
+chmod +x $_dir/scripts/init.d/gop2p
+
+
+if [ -d /etc/init.d ];then
+	cp $_dir/scripts/init.d/gop2p /etc/init.d/gop2p
+	chmod +x /etc/init.d/gop2p
+fi
+
+echo `dirname $_path`
