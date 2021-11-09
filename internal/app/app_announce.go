@@ -6,22 +6,25 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/midoks/go-p2p-server/internal/tools/uniqid"
 )
 
 //接收announce信息
 func p2pChannel(c *gin.Context) {
 	json := make(map[string]interface{}) //注意该结构接受的内容
-	c.BindJSON(&json)
+	c.ShouldBind(&json)
 	log.Printf("%v", &json)
+
+	uniqid_id := uniqid.New(uniqid.Params{"", false})
 
 	c.JSON(http.StatusOK, gin.H{
 		"ret": 0,
 		"data": gin.H{
-
-			"id":              "123123123",
+			"id":              uniqid_id,
 			"peers":           []string{},
 			"report_interval": 10,
-			"v":               "scadasd",
+			"v":               uniqid_id,
 		},
 	})
 }
@@ -29,7 +32,7 @@ func p2pChannel(c *gin.Context) {
 //接收announce信息
 func p2pChannelPeers(c *gin.Context) {
 	json := make(map[string]interface{}) //注意该结构接受的内容
-	c.BindJSON(&json)
+	c.ShouldBind(&json)
 	log.Printf("%v", &json)
 
 	channel_id := c.Param("channel_id")
@@ -52,7 +55,7 @@ func p2pChannelPeers(c *gin.Context) {
 //接收announce信息
 func p2pChannelStats(c *gin.Context) {
 	json := make(map[string]interface{}) //注意该结构接受的内容
-	c.BindJSON(&json)
+	c.ShouldBind(&json)
 	log.Printf("%v", &json)
 
 	channel_id := c.Param("channel_id")

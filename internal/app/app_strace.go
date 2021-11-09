@@ -2,13 +2,16 @@ package app
 
 import (
 	"fmt"
-	"log"
+	// "log"
 	"net/http"
-	"runtime"
-	"time"
+	// "runtime"
+	// "time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/midoks/go-p2p-server/internal/client"
+	"github.com/midoks/go-p2p-server/internal/conf"
+	"github.com/midoks/go-p2p-server/internal/tools"
 )
 
 //websocket
@@ -32,28 +35,32 @@ func websocketReqMethod(c *gin.Context) {
 	}
 	// defer ws.Close()
 
-	for {
+	clientId := client.New(id, ws, true)
+	fmt.Println(clientId)
 
-		// go func(ws *websocket.Conn) {
-		mt, message, err := ws.ReadMessage()
-		if err != nil {
-			// logger.Errorf("read websocket msg: %v", err)
-			fmt.Println("err:", err, "id:", mt)
-			// logger.Errorf("read websocket msg: %v", err)
-			break
-		}
+	verNum := tools.GetVersionNum(conf.App.Version)
+	clientId.SendMsgVersion(verNum)
+	// for {
 
-		fmt.Println(mt, string(message), err, runtime.NumGoroutine())
+	// 	// go func(ws *websocket.Conn) {
+	// 	mt, message, err := ws.ReadMessage()
+	// 	if err != nil {
+	// 		// logger.Errorf("read websocket msg: %v", err)
+	// 		fmt.Println("err:", err, "id:", mt)
+	// 		break
+	// 	}
 
-		// }(ws)
-		now := time.Now().Format("2006-01-02 15:04:05")
-		log.Printf("recv: %s", message)
+	// 	fmt.Println(mt, string(message), err, runtime.NumGoroutine())
 
-		err = ws.WriteMessage(mt, []byte(now))
-		if err != nil {
-			log.Println("write:", err)
-			break
-		}
+	// 	// }(ws)
+	// 	now := time.Now().Format("2006-01-02 15:04:05")
+	// 	log.Printf("recv: %s", message)
 
-	}
+	// 	err = ws.WriteMessage(mt, []byte(now))
+	// 	if err != nil {
+	// 		log.Println("write:", err)
+	// 		break
+	// 	}
+
+	// }
 }
