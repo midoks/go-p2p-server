@@ -49,3 +49,11 @@ func (c *Client) SendMsgVersion(version int) error {
 func (c *Client) SendMessage(msg []byte) error {
 	return c.Ws.WriteMessage(1, msg)
 }
+
+func (c *Client) Close() error {
+	return c.Ws.Close()
+}
+
+func (c *Client) IsExpired(now, limit int64) bool {
+	return now-c.Timestamp > limit
+}

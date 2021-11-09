@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/midoks/go-p2p-server/internal/client"
 	"github.com/midoks/go-p2p-server/internal/conf"
+	"github.com/midoks/go-p2p-server/internal/hub"
 	"github.com/midoks/go-p2p-server/internal/tools"
 )
 
@@ -40,6 +41,49 @@ func websocketReqMethod(c *gin.Context) {
 
 	verNum := tools.GetVersionNum(conf.App.Version)
 	clientId.SendMsgVersion(verNum)
+
+	hub.DoRegister(clientId)
+
+	go func() {
+
+		for {
+			// msg, err = wsutil.ReadClientMessage(conn, msg[:0])
+			// if err != nil {
+			// 	log.Infof("read message error: %v", err)
+			// 	break
+			// }
+
+			mt, message, err := ws.ReadMessage()
+			if err != nil {
+				// logger.Errorf("read websocket msg: %v", err)
+				fmt.Println("err:", err, "id:", mt)
+				break
+			}
+
+			fmt.Println("go func:", mt, message)
+			// for _, m := range message {
+			// 	// ping
+			// if m.OpCode.IsControl() {
+			// 	c.UpdateTs()
+			// 	//log.Warnf("receive ping from %s platform %s", id, platform)
+			// 	err := wsutil.HandleClientControlMessage(conn, m)
+			// 	if err != nil {
+			// 		fmt.Println("handle control error: ", err)
+			// 	}
+			// 	continue
+			// }
+			// 	data := bytes.TrimSpace(bytes.Replace(m.Payload, newline, space, -1))
+			// 	hdr, err := handler.NewHandler(data, c)
+			// 	if err != nil {
+			// 		// 心跳包
+			// 		c.UpdateTs()
+			// 		log.Infof("NewHandler " + err.Error())
+			// 	} else {
+			// 		hdr.Handle()
+			// 	}
+			// }
+		}
+	}()
 	// for {
 
 	// 	// go func(ws *websocket.Conn) {

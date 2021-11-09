@@ -23,7 +23,7 @@ func p2pChannel(c *gin.Context) {
 		"data": gin.H{
 			"id":              uniqid_id,
 			"peers":           []string{},
-			"report_interval": 10,
+			"report_interval": 30,
 			"v":               uniqid_id,
 		},
 	})

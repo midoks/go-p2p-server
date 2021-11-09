@@ -2,11 +2,20 @@ package app
 
 import (
 	"fmt"
+	// "log"
 	"net/http"
+	"time"
 
 	go_logger "github.com/phachon/go-logger"
 
 	"github.com/gin-gonic/gin"
+	// "github.com/midoks/go-p2p-server/internal/conf"
+	"github.com/midoks/go-p2p-server/internal/hub"
+)
+
+const (
+	CHECK_CLIENT_INTERVAL = 10
+	EXPIRE_LIMIT          = 100
 )
 
 var logger *go_logger.Logger
@@ -28,9 +37,41 @@ func httpCors() gin.HandlerFunc {
 	}
 }
 
+func init() {
+	fmt.Println("app init")
+	hub.Init()
+
+	go func() {
+		for {
+			time.Sleep(CHECK_CLIENT_INTERVAL * time.Second)
+			now := time.Now().Unix()
+			fmt.Println("start check client alive...")
+			count := 0
+			for item := range hub.GetInstance().Clients.IterBuffered() {
+				cli := item.Val
+				if cli.LocalNode && cli.IsExpired(now, EXPIRE_LIMIT) {
+					// 节点过期
+					//log.Warnf("client %s is expired for %d, close it", cli.PeerId, now-cli.Timestamp)
+					if ok := hub.DoUnregister(cli.PeerId); ok {
+						cli.Close()
+						count++
+					}
+				}
+			}
+			fmt.Println("check client finished, closed  clients:", count)
+		}
+	}()
+}
+
+func websocketConnCount(c *gin.Context) {
+	// num := hub.GetClientNum()
+	c.String(http.StatusOK, fmt.Sprintf("%d", hub.GetClientNum()))
+}
+
 func Run() {
 	httpPort := "3030"
 	r := gin.Default()
+	gin.SetMode(gin.ReleaseMode)
 	r.Use(httpCors())
 
 	r.GET("/", func(c *gin.Context) {
@@ -43,6 +84,7 @@ func Run() {
 
 	r.GET("/ws", websocketReqMethod)
 	r.GET("/ws?id=:id", websocketReqMethod)
+	r.GET("count", websocketConnCount)
 
 	r.Run(fmt.Sprintf(":%s", httpPort))
 }
