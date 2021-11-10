@@ -14,26 +14,28 @@ func initAnnounce() {
 	announce.Init()
 }
 
+type AnPeer struct {
+	Id string `json:"data"`
+}
+
 //接收announce信息
 func p2pChannel(c *gin.Context) {
 	postJson := make(map[string]interface{}) //注意该结构接受的内容
 	c.BindJSON(&postJson)
 
 	uniqid_id := uniqid.New(uniqid.Params{"", false})
-	gPeers := []string{}
+	gPeers := []AnPeer{}
 	if channel, ok := postJson["channel"]; ok {
 		key := channel.(string)
 		if peer, ok := announce.Get(key); ok {
 			for _, p := range peer {
-				fmt.Println(p)
-				gPeers = append(gPeers, p)
+
+				gPeers = append(gPeers, AnPeer{Id: p})
 			}
 			announce.Set(key, uniqid_id)
 		} else {
 			announce.Set(key, uniqid_id)
 		}
-
-		fmt.Println("hubAnn count:", announce.KeyCount(key))
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -55,11 +57,11 @@ func p2pChannelPeers(c *gin.Context) {
 	channel_id := c.Param("channel_id")
 	peers := c.Param("peer")
 
-	gPeers := []string{}
+	gPeers := []AnPeer{}
 	key := channel_id
 	if peer, ok := announce.Get(key); ok {
 		for _, p := range peer {
-			gPeers = append(gPeers, p)
+			gPeers = append(gPeers, AnPeer{Id: p})
 		}
 	}
 
@@ -83,11 +85,11 @@ func p2pChannelStats(c *gin.Context) {
 	channel_id := c.Param("channel_id")
 	peers := c.Param("peer")
 
-	gPeers := []string{}
+	gPeers := []AnPeer{}
 	key := channel_id
 	if peer, ok := announce.Get(key); ok {
 		for _, p := range peer {
-			gPeers = append(gPeers, p)
+			gPeers = append(gPeers, AnPeer{Id: p})
 		}
 	}
 

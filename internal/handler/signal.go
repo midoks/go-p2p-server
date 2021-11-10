@@ -47,15 +47,17 @@ func (s *SignalHandler) Handle() {
 		//	log.Warnf("send signal msg from %s to %s on node %s", s.Cli.PeerId, s.Msg.ToPeerId, target.(*client.Client).RpcNodeAddr)
 		//}
 	} else {
-		// log.Infof("Peer %s not found", s.Msg.ToPeerId)
+		fmt.Println("Peer not found:", s.Msg.ToPeerId)
 		resp := SignalResp{
 			Action:     "signal",
 			FromPeerId: s.Msg.ToPeerId,
 		}
-		//hub.SendJsonToClient(s.Cli.PeerId, resp)
+		// hub.SendJsonToClient(s.Cli.PeerId, resp)
 		// 发送一次后，同一peerId下次不再发送，节省sysCall
 		if !s.Cli.HasNotFoundPeer(s.Msg.ToPeerId) {
 			s.Cli.EnqueueNotFoundPeer(s.Msg.ToPeerId)
+
+			fmt.Println("www:", s.Msg.ToPeerId)
 			hub.SendJsonToClient(s.Cli, resp)
 		}
 	}
