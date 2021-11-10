@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"github.com/midoks/go-p2p-server/internal/hub"
-	// "github.com/lexkong/log"
 	"github.com/midoks/go-p2p-server/internal/client"
+	"github.com/midoks/go-p2p-server/internal/hub"
+	// log "github.com/phachon/go-logger"
 )
 
 type HeartbeatHandler struct {
