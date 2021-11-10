@@ -92,7 +92,6 @@ func websocketConnCount(c *gin.Context) {
 func Run() {
 	httpPort := "3030"
 	r := gin.Default()
-	gin.SetMode(gin.ReleaseMode)
 	r.Use(httpCors())
 
 	r.GET("/", func(c *gin.Context) {
@@ -105,7 +104,7 @@ func Run() {
 
 	r.GET("/ws", websocketReqMethod)
 	r.GET("/ws?id=:id", websocketReqMethod)
-	r.GET("count", websocketConnCount)
+	r.GET("/count", websocketConnCount)
 
 	r.Run(fmt.Sprintf(":%s", httpPort))
 }

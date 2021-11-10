@@ -32,6 +32,13 @@ func Get(key string) ([]string, bool) {
 	ok, err := rdb.Expire(key, 60*time.Second).Result()
 	fmt.Printf("ok=%v err=%v\n", ok, err)
 
+	for _, k := range val {
+		_, err := rdb.Get(k).Result()
+		if err != nil {
+			DelKeyValue(key, k)
+		}
+	}
+
 	if err != nil {
 		return []string{}, false
 	}
@@ -39,12 +46,26 @@ func Get(key string) ([]string, bool) {
 	return val, true
 }
 
+func SetPeerHeartbeat(peer string, expiration time.Duration) (interface{}, error) {
+	d, err := rdb.Get(peer).Result()
+	if err == nil {
+		f, err := rdb.Expire(peer, expiration).Result()
+		return f, err
+	}
+	return d, err
+}
+
 func Set(key, val string) {
+
+	_, err := rdb.Set(val, "1", 60*time.Second).Result()
+	fmt.Println("redism:", err)
+
 	ret, err := rdb.SAdd(key, val).Result()
 	fmt.Println("redis:", ret, err)
 
-	ok, err := rdb.Expire(key, 60*time.Second).Result()
-	fmt.Printf("ok=%v err=%v\n", ok, err)
+	_, err = rdb.Expire(key, 60*time.Second).Result()
+	fmt.Printf(" err=%v\n", err)
+
 }
 
 func DelKeyValue(key, val string) bool {

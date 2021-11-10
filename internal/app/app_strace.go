@@ -45,14 +45,14 @@ func websocketReqMethod(c *gin.Context) {
 	go func() {
 		for {
 
-			mt, message, err := ws.ReadMessage()
+			_, message, err := ws.ReadMessage()
 			if err != nil {
 				logger.Errorf("read websocket msg: %v", err)
-				fmt.Println("err:", err, "id:", mt)
+				fmt.Println("err:", err, "id:")
 				break
 			}
 
-			fmt.Println("go func:", mt, string(message))
+			fmt.Println("go func:", string(message))
 			data := bytes.TrimSpace(bytes.Replace(message, []byte{'\n'}, []byte{' '}, -1))
 			hdr, err := handler.NewHandler(data, clientId)
 			if err != nil {

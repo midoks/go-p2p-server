@@ -3,10 +3,12 @@ package app
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/midoks/go-p2p-server/internal/announce"
+	// "github.com/midoks/go-p2p-server/internal/hub"
 	"github.com/midoks/go-p2p-server/internal/tools/uniqid"
 )
 
@@ -15,7 +17,7 @@ func initAnnounce() {
 }
 
 type AnPeer struct {
-	Id string `json:"data"`
+	Id string `json:"id"`
 }
 
 //接收announce信息
@@ -23,7 +25,7 @@ func p2pChannel(c *gin.Context) {
 	postJson := make(map[string]interface{}) //注意该结构接受的内容
 	c.BindJSON(&postJson)
 
-	uniqid_id := uniqid.New(uniqid.Params{"", false})
+	uniqidId := uniqid.New(uniqid.Params{"", false})
 	gPeers := []AnPeer{}
 	if channel, ok := postJson["channel"]; ok {
 		key := channel.(string)
@@ -32,19 +34,19 @@ func p2pChannel(c *gin.Context) {
 
 				gPeers = append(gPeers, AnPeer{Id: p})
 			}
-			announce.Set(key, uniqid_id)
+			announce.Set(key, uniqidId)
 		} else {
-			announce.Set(key, uniqid_id)
+			announce.Set(key, uniqidId)
 		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"ret": 0,
 		"data": gin.H{
-			"id":              uniqid_id,
+			"id":              uniqidId,
 			"peers":           gPeers,
 			"report_interval": 3,
-			"v":               uniqid_id,
+			"v":               uniqidId,
 		},
 	})
 }
@@ -65,6 +67,8 @@ func p2pChannelPeers(c *gin.Context) {
 		}
 	}
 
+	announce.SetPeerHeartbeat(peers, 60*time.Second)
+
 	c.JSON(http.StatusOK, gin.H{
 		"ret": 0,
 		"data": gin.H{
@@ -84,6 +88,8 @@ func p2pChannelStats(c *gin.Context) {
 
 	channel_id := c.Param("channel_id")
 	peers := c.Param("peer")
+
+	announce.SetPeerHeartbeat(peers, 60*time.Second)
 
 	gPeers := []AnPeer{}
 	key := channel_id

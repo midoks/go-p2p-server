@@ -14,5 +14,15 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 go-p2p-server
-vendor
+vendor/github.com/go-redis
+vendor/github.com/*c*
+vendor/github.com/*f*
+vendor/github.com/*a*
+vendor/github.com/*j*
+vendor/github.com/*l*
+vendor/github.com/*m*
+vendor/github.com/*ss*
+vendor/golang.org
+vendor/gopkg.in
+vendor/modules.txt
 logs

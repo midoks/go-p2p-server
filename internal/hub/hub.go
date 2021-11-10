@@ -33,6 +33,10 @@ func DoRegister(client *client.Client) {
 	}
 }
 
+func Has(key string) bool {
+	return h.Clients.Has(key)
+}
+
 func GetClient(id string) (*client.Client, bool) {
 	return h.Clients.Get(id)
 }
