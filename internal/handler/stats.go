@@ -1,25 +1,25 @@
 package handler
 
 import (
-	"cbsignal/hub"
 	"encoding/json"
 	"fmt"
+	"github.com/midoks/go-p2p-server/internal/hub"
 	"net/http"
 	"runtime"
 )
 
 type SignalInfo struct {
-	Version string `json:"version"`
-	CurrentConnections int `json:"current_connections"`
+	Version            string `json:"version"`
+	CurrentConnections int    `json:"current_connections"`
 	RateLimit          int64  `json:"rate_limit,omitempty"`
-	SecurityEnabled    bool `json:"security_enabled,omitempty"`
-	ClusterMode        bool `json:"cluster_mode,omitempty"`
-	NumGoroutine       int  `json:"num_goroutine"`
-	NumPerMap          []int `json:"num_per_map"`
+	SecurityEnabled    bool   `json:"security_enabled,omitempty"`
+	ClusterMode        bool   `json:"cluster_mode,omitempty"`
+	NumGoroutine       int    `json:"num_goroutine"`
+	NumPerMap          []int  `json:"num_per_map"`
 }
 
 type Resp struct {
-	Ret int `json:"ret"`
+	Ret  int         `json:"ret"`
 	Data *SignalInfo `json:"data"`
 }
 
@@ -67,4 +67,3 @@ func CountHandler() http.HandlerFunc {
 
 	}
 }
-

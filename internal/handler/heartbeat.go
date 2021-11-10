@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"cbsignal/hub"
-	"github.com/lexkong/log"
+	"github.com/midoks/go-p2p-server/internal/hub"
+	// "github.com/lexkong/log"
 	"github.com/midoks/go-p2p-server/internal/client"
 )
 

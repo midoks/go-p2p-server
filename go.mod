@@ -4,7 +4,9 @@ go 1.17
 
 require (
 	github.com/gin-gonic/gin v1.7.4
+	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/gorilla/websocket v1.4.2
+	github.com/lexkong/log v0.0.0-20180607165131-972f9cd951fc
 	github.com/phachon/go-logger v0.0.0-20191215032019-86e4227f71ea
 	github.com/urfave/cli v1.22.5
 )

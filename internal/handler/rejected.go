@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"cbsignal/hub"
 	"github.com/midoks/go-p2p-server/internal/client"
+	"github.com/midoks/go-p2p-server/internal/hub"
 )
 
 type RejectHandler struct {

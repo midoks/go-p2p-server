@@ -54,6 +54,17 @@ func (m ConMap) Set(key string, value *client.Client) {
 	shard.Unlock()
 }
 
+// Get retrieves an element from map under given key.
+func (m ConMap) Get(key string) (*client.Client, bool) {
+	// Get shard
+	shard := m.GetShard(key)
+	shard.RLock()
+	// Get item from shard.
+	val, ok := shard.items[key]
+	shard.RUnlock()
+	return val, ok
+}
+
 // Looks up an item under specified key
 func (m ConMap) Has(key string) bool {
 	// Get shard
@@ -79,6 +90,15 @@ func (m ConMap) Clear() {
 	for item := range m.IterBuffered() {
 		m.Remove(item.Key)
 	}
+}
+
+func (m ConMap) CountPerMapNoLock() []int {
+	var count = make([]int, SHARD_COUNT)
+	for i := 0; i < SHARD_COUNT; i++ {
+		shard := m[i]
+		count[i] = len(shard.items)
+	}
+	return count
 }
 
 func (m ConMap) CountNoLock() int {

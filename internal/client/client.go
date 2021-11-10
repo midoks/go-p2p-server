@@ -9,6 +9,10 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+const (
+	MAX_NOT_FOUND_PEERS_LIMIT = 5
+)
+
 type SignalVerResponse struct {
 	Action string `json:"action"`
 	Ver    int    `json:"ver"`
@@ -46,6 +50,11 @@ func (c *Client) SendMsgVersion(version int) error {
 	return err
 }
 
+func (c *Client) UpdateTs() {
+	//log.Warnf("%s UpdateTs", c.PeerId)
+	c.Timestamp = time.Now().Unix()
+}
+
 func (c *Client) SendMessage(msg []byte) error {
 	return c.Ws.WriteMessage(1, msg)
 }
@@ -56,4 +65,20 @@ func (c *Client) Close() error {
 
 func (c *Client) IsExpired(now, limit int64) bool {
 	return now-c.Timestamp > limit
+}
+
+func (c *Client) EnqueueNotFoundPeer(id string) {
+	c.NotFoundPeers = append(c.NotFoundPeers, id)
+	if len(c.NotFoundPeers) > MAX_NOT_FOUND_PEERS_LIMIT {
+		c.NotFoundPeers = c.NotFoundPeers[1:len(c.NotFoundPeers)]
+	}
+}
+
+func (c *Client) HasNotFoundPeer(id string) bool {
+	for _, v := range c.NotFoundPeers {
+		if id == v {
+			return true
+		}
+	}
+	return false
 }

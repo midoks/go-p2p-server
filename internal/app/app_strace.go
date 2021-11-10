@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	// "log"
+	"bytes"
 	"net/http"
 	// "runtime"
 	// "time"
@@ -11,6 +12,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/midoks/go-p2p-server/internal/client"
 	"github.com/midoks/go-p2p-server/internal/conf"
+	"github.com/midoks/go-p2p-server/internal/handler"
 	"github.com/midoks/go-p2p-server/internal/hub"
 	"github.com/midoks/go-p2p-server/internal/tools"
 )
@@ -60,7 +62,7 @@ func websocketReqMethod(c *gin.Context) {
 				break
 			}
 
-			fmt.Println("go func:", mt, message)
+			fmt.Println("go func:", mt, string(message))
 			// for _, m := range message {
 			// 	// ping
 			// if m.OpCode.IsControl() {
@@ -72,16 +74,14 @@ func websocketReqMethod(c *gin.Context) {
 			// 	}
 			// 	continue
 			// }
-			// 	data := bytes.TrimSpace(bytes.Replace(m.Payload, newline, space, -1))
-			// 	hdr, err := handler.NewHandler(data, c)
-			// 	if err != nil {
-			// 		// 心跳包
-			// 		c.UpdateTs()
-			// 		log.Infof("NewHandler " + err.Error())
-			// 	} else {
-			// 		hdr.Handle()
-			// 	}
-			// }
+			data := bytes.TrimSpace(bytes.Replace(message, []byte{'\n'}, []byte{' '}, -1))
+			hdr, err := handler.NewHandler(data, clientId)
+			if err != nil {
+				clientId.UpdateTs()
+				fmt.Println("NewHandler ", err.Error())
+			} else {
+				hdr.Handle()
+			}
 		}
 	}()
 	// for {

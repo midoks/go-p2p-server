@@ -40,6 +40,7 @@ func httpCors() gin.HandlerFunc {
 func init() {
 	fmt.Println("app init")
 	hub.Init()
+	initAnnounce()
 
 	go func() {
 		for {
