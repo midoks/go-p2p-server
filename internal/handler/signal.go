@@ -14,7 +14,7 @@ type SignalHandler struct {
 
 func (s *SignalHandler) Handle() {
 	//h := hub.GetInstance()
-	//log.Infof("load client Msg %v", s.Msg)
+	fmt.Println("load client Msg :", s.Msg)
 	//判断节点是否还在线
 	if target, ok := hub.GetClient(s.Msg.ToPeerId); ok && !s.Cli.HasNotFoundPeer(s.Msg.ToPeerId) {
 		//log.Infof("found client %s", s.Msg.ToPeerId)

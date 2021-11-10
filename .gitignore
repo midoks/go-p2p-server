@@ -15,3 +15,4 @@
 # vendor/
 go-p2p-server
 vendor
+logs
