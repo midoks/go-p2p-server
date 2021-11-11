@@ -1,6 +1,6 @@
 #!/bin/bash
 # chkconfig: 2345 55 25
-# description: Imail Service
+# description: gop2p Service
 
 ### BEGIN INIT INFO
 # Provides:          bt
@@ -8,8 +8,8 @@
 # Required-Stop:     $all
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: starts Imail
-# Description:       starts the Imail
+# Short-Description: starts Gop2p
+# Description:       starts the Gop2p
 ### END INIT INFO
 
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin

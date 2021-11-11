@@ -21,7 +21,7 @@ go mod vendor
 
 #rm -rf go-p2p-server
 go build ./
-
+mv go-p2p-server gop2p
 
 cd $TAGRT_DIR/go-p2p-server/scripts
 
