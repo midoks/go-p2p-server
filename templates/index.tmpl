@@ -106,7 +106,7 @@
     var klinkOnly = true;
     var mul = 10;
     var wsAddr = "";
-    if (location.protocol == "https"){
+    if (location.protocol == "https:"){
        wsAddr = "wss://"+location.host+"/trace?id=p2ptester";
     } else {
       wsAddr = "ws://"+location.host+"/trace?id=p2ptester";
