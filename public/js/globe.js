@@ -20199,7 +20199,7 @@
                     break;
                 case "join":
                     R.updateData(t.data);
-                    $('.data-flow').append('<p>'+t.peer_id+' 加入了 KLink 网络</p>');
+                    $('.data-flow').append('<p>'+t.peer_id+' 加入了 P2P 网络</p>');
                     if($('.data-flow').children().length>10){
                         $('.data-flow').children()[0].remove();
                     }
@@ -20209,7 +20209,7 @@
                     }
                     break;
                 case "leave":
-                    $('.data-flow').append('<p>'+t.data+' 已断开 KLink 网络</p>');
+                    $('.data-flow').append('<p>'+t.data+' 已断开 P2P 网络</p>');
                     if($('.data-flow').children().length>10){
                         $('.data-flow').children()[0].remove();
                     }
