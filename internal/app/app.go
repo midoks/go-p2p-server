@@ -105,6 +105,7 @@ func Run() {
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{})
 	})
 
+	r.GET("/getStats", p2pGetStats)
 	r.POST("/channel", p2pChannel)
 	r.POST("/channel/:channel_id/node/:peer/stats", p2pChannelStats)
 	r.POST("/channel/:channel_id/node/:peer/peers", p2pChannelPeers)

@@ -75,7 +75,7 @@
     </div>
   </div>
   <div class="statistics">
-    <li><span class="statistics-span">最新版本: </span><span id="beta">v 1.1.0</span></li> 	
+    <li><span class="statistics-span">最新版本: </span><span id="beta">v 1.0.0</span></li> 	
     <li><span class="statistics-span">统计时间: </span><span id="stat_runtime">-</span></li>
     <li><span class="statistics-span">HTTP 流量: </span><span id="stat_cdndata">-</span></li>
     <li><span class="statistics-span">P2P  流量: </span><span id="stat_p2pdata">-</span></li>
@@ -83,7 +83,7 @@
     <li><span class="statistics-span">P2P  带宽: </span><span id="stat_p2pbw">-</span></li>
     <li><span class="statistics-span">P2P使用率: </span><span id="stat_P2PRatio">-</span></li>
     <li><span class="statistics-span">系统响应: </span><span id="stat_response">-</span> ms</li>
-    <li><a href="https://github.com/midoks/go-p2p-server" target="_blank" style="color:white" id="redirect">-> 免费接入指南 <-</a></li>
+    <li><a href="https://github.com/midoks/go-p2p-server" target="_blank" style="color:red" id="redirect">-> 免费接入指南 <-</a></li>
   </div>
   <div class="initial-loader spread hide">
     <img class="image-wrapper" />
@@ -120,8 +120,15 @@
       if(klinktester_end-klinktester_start>30000 && typeof(klinktester)=="function"){
         klinktester();
       }
+
+      var statsAddr = "";
+      if (location.protocol == "https:"){
+         statsAddr = "http://"+location.host+"/getStats";
+      } else {
+        statsAddr = "http://"+location.host+"/getStats";
+      }
       $.ajax({
-        url: 'https://tracker.klink.tech/getStats',
+        url: statsAddr,
         dataType: 'json',
         timeout: 3000,
         success: function (data) {
@@ -130,20 +137,23 @@
           $('#stat_cdnbw').html(Math.round(data.avgHTTPBandwidth * 8 * mul * 100 / 1000 / 1000) / 100 + ' Gbps');
           $('#stat_p2pbw').html(Math.round(data.avgP2PBandwidth * 8 * mul *100 / 1000 / 1000) / 100 + ' Gbps');
           concurrent=data.peers;
+          $('.data-live .data-live-count').html(data.peers);
           $('#stat_P2PRatio').html(Math.round((data.avgP2PBandwidth / data.avgHTTPBandwidth)*10000) / 100 + ' %');
           $('#stat_runtime').html(data.serverRuntime + ' s');
         },
         complete: function () {
           setTimeout(function () {
             updateData()
-          }, 5000);
+          }, 2000);
         }
       });
     };
     updateData();
-    setInterval(function(){
-        $('#redirect').css('color',$('#redirect').css('color')=='rgb(255, 255, 255)' ? "red" : "white")
-    },300)
+
+    //暂时不闪烁
+    // setInterval(function(){
+    //     $('#redirect').css('color',$('#redirect').css('color')=='rgb(255, 255, 255)' ? "red" : "white")
+    // },300)
   </script>
 </body>
 
