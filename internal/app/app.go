@@ -11,6 +11,8 @@ import (
 	"github.com/gin-gonic/gin"
 	// "github.com/midoks/go-p2p-server/internal/conf"
 	"github.com/midoks/go-p2p-server/internal/hub"
+	"github.com/midoks/go-p2p-server/internal/queue"
+	"github.com/midoks/go-p2p-server/internal/tools"
 )
 
 const (
@@ -38,7 +40,8 @@ func httpCors() gin.HandlerFunc {
 }
 
 func init() {
-	fmt.Println("app init")
+	queue.Init()
+	tools.Init()
 	hub.Init()
 	initAnnounce()
 
@@ -72,8 +75,10 @@ func init() {
 				cli := item.Val
 				if cli.LocalNode && cli.IsExpired(now, EXPIRE_LIMIT) {
 					// 节点过期
-					//log.Warnf("client %s is expired for %d, close it", cli.PeerId, now-cli.Timestamp)
+					info := fmt.Sprintf("client %s is expired for %d, close it", cli.PeerId, now-cli.Timestamp)
+					fmt.Println(info)
 					if ok := hub.DoUnregister(cli.PeerId); ok {
+						queue.PushText("leave", cli.PeerId)
 						cli.Close()
 						count++
 					}
@@ -104,8 +109,10 @@ func Run() {
 	r.POST("/channel/:channel_id/node/:peer/stats", p2pChannelStats)
 	r.POST("/channel/:channel_id/node/:peer/peers", p2pChannelPeers)
 
-	r.GET("/ws", websocketReqMethod)
-	r.GET("/ws?id=:id", websocketReqMethod)
+	r.GET("/ws", wsReqMethod)
+	r.GET("/ws?id=:id", wsReqMethod)
+	r.GET("/trace", wsTrace)
+	r.GET("/trace?id=:id", wsTrace)
 	r.GET("/count", websocketConnCount)
 
 	r.Run(fmt.Sprintf(":%s", httpPort))

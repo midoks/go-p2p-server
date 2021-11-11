@@ -12,7 +12,6 @@ type HeartbeatHandler struct {
 
 func (s *HeartbeatHandler) Handle() {
 
-	// log.Infof("receive heartbeat from %s", s.Cli.PeerId)
 	s.Cli.UpdateTs()
 
 	resp := SignalResp{

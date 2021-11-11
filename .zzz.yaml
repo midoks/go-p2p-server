@@ -1,0 +1,19 @@
+title: zzz
+frequency: 3
+dirfilter:
+- tmp
+- .git
+- public
+- scripts
+- vendor
+- logs
+ext:
+- go
+- tmpl
+enablerun: true
+action:
+  before:
+  - echo "zzz start"
+  after:
+  - echo "zzz end"
+link: https://github.com/midoks/zzz

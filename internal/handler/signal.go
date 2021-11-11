@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"fmt"
+	// "fmt"
 	// "github.com/lexkong/log"
 	"github.com/midoks/go-p2p-server/internal/client"
 	"github.com/midoks/go-p2p-server/internal/hub"
@@ -14,7 +14,7 @@ type SignalHandler struct {
 
 func (s *SignalHandler) Handle() {
 	//h := hub.GetInstance()
-	fmt.Println("load client Msg :", s.Msg)
+	// fmt.Println("load client Msg :", s.Msg)
 	//判断节点是否还在线
 	if target, ok := hub.GetClient(s.Msg.ToPeerId); ok && !s.Cli.HasNotFoundPeer(s.Msg.ToPeerId) {
 		//log.Infof("found client %s", s.Msg.ToPeerId)
@@ -28,11 +28,11 @@ func (s *SignalHandler) Handle() {
 			Data:       s.Msg.Data,
 		}
 		if err := hub.SendJsonToClient(target, resp); err != nil {
-			peerType := "local"
-			if !target.LocalNode {
-				peerType = "remote"
-			}
-			fmt.Println("%s send signal to %s peer %s error %s", s.Cli.PeerId, peerType, target.PeerId, err)
+			// peerType := "local"
+			// if !target.LocalNode {
+			// 	peerType = "remote"
+			// }
+			//fmt.Println("%s send signal to %s peer %s error %s", s.Cli.PeerId, peerType, target.PeerId, err)
 			// if !fatal {
 			//hub.RemoveClient(target.PeerId)
 			s.Cli.EnqueueNotFoundPeer(target.PeerId)
@@ -47,7 +47,7 @@ func (s *SignalHandler) Handle() {
 		//	log.Warnf("send signal msg from %s to %s on node %s", s.Cli.PeerId, s.Msg.ToPeerId, target.(*client.Client).RpcNodeAddr)
 		//}
 	} else {
-		fmt.Println("Peer not found:", s.Msg.ToPeerId)
+		// fmt.Println("Peer not found:", s.Msg.ToPeerId)
 		resp := SignalResp{
 			Action:     "signal",
 			FromPeerId: s.Msg.ToPeerId,
@@ -57,7 +57,7 @@ func (s *SignalHandler) Handle() {
 		if !s.Cli.HasNotFoundPeer(s.Msg.ToPeerId) {
 			s.Cli.EnqueueNotFoundPeer(s.Msg.ToPeerId)
 
-			fmt.Println("www:", s.Msg.ToPeerId)
+			// fmt.Println("www:", s.Msg.ToPeerId)
 			hub.SendJsonToClient(s.Cli, resp)
 		}
 	}

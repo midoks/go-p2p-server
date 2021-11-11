@@ -4,6 +4,7 @@ import (
 	"fmt"
 	// "log"
 	"bytes"
+	"encoding/json"
 	"net/http"
 	// "runtime"
 	// "time"
@@ -14,6 +15,7 @@ import (
 	"github.com/midoks/go-p2p-server/internal/conf"
 	"github.com/midoks/go-p2p-server/internal/handler"
 	"github.com/midoks/go-p2p-server/internal/hub"
+	"github.com/midoks/go-p2p-server/internal/queue"
 	"github.com/midoks/go-p2p-server/internal/tools"
 )
 
@@ -25,7 +27,7 @@ var upGrader = websocket.Upgrader{
 }
 
 //websocket实现
-func websocketReqMethod(c *gin.Context) {
+func wsReqMethod(c *gin.Context) {
 	// c.Request.ParseForm()
 	// id := c.Request.Form.Get("id")
 	id := c.Query("id")
@@ -52,7 +54,7 @@ func websocketReqMethod(c *gin.Context) {
 				break
 			}
 
-			fmt.Println("go func:", string(message))
+			// fmt.Println("go func:", string(message))
 			data := bytes.TrimSpace(bytes.Replace(message, []byte{'\n'}, []byte{' '}, -1))
 			hdr, err := handler.NewHandler(data, clientId)
 			if err != nil {
@@ -63,5 +65,38 @@ func websocketReqMethod(c *gin.Context) {
 			}
 		}
 	}()
+}
 
+func wsTrace(c *gin.Context) {
+	ws, err := upGrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		return
+	}
+	id := c.Query("id")
+	clientId := client.New(id, ws, true)
+	clientId.SendMsgVersion(tools.GetVersionNum(conf.App.Version))
+
+	go func() {
+		for {
+
+			data := <-queue.ValChan
+			fmt.Println("queue", data)
+
+			b, err := json.Marshal(data)
+			if err != nil {
+				// log.Error("json.Marshal", err)
+				fmt.Println("trace json.Marshal", err)
+			} else {
+				ws.WriteMessage(1, b)
+			}
+
+			// _, message, err := ws.ReadMessage()
+			// if err != nil {
+			// 	logger.Errorf("read websocket msg: %v", err)
+			// 	fmt.Println("err:", err, "id:")
+			// 	break
+			// }
+
+		}
+	}()
 }

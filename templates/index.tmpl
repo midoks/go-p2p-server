@@ -105,7 +105,13 @@
     var klinktester = null;
     var klinkOnly = true;
     var mul = 10;
-    var wsAddr = "wss://signal.klink.tech/ws?id=klinktester";
+    var wsAddr = "";
+    if (location.protocol == "https"){
+       wsAddr = "wss://"+location.host+"/trace?id=p2ptester";
+    } else {
+      wsAddr = "ws://"+location.host+"/trace?id=p2ptester";
+    }
+    console.log(wsAddr);
   </script>&quot;
   <script src="public/js/globe.js?v=19"></script>&quot;
   <script src="https://cdn.jsdelivr.net/npm/jquery@latest"></script>&quot;
