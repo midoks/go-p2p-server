@@ -30,7 +30,7 @@ im_start(){
     isStart=`ps -ef|grep 'gop2p service' |grep -v grep|awk '{print $2}'`
     if [ "$isStart" == '' ];then
         echo -e "Starting gop2p... \c"
-        cd $app_path && ./imail service &
+        cd $app_path && ./gop2p service &
         isStart=""
         while [[ "$isStart" == "" ]];
         do
