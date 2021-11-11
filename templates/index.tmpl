@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>GoP2P 免费加速视频流媒体，P2P CDN 加速视频流媒体</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta name="description" content="Setup your video on P2P network for free." />
+  <meta name="keywords" content="p2p, globe, network, realtime, live, webrtc, content delivery network, content distribution network" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="stylesheet" href="public/css/globe.css" />
+  <style>
+    .data-flow {
+      color: #fff;
+      border: 1px solid hsla(0, 0%, 100%, .4);
+      margin-bottom: 8px;
+      text-align: center;
+      width: 350px;
+      height:230px;
+      padding-top: 10px;
+    }
+    .data-flow p{
+      margin:0px;
+    }
+    .top-section .logo{
+      width:170px;
+      background: url(public/logo.png) no-repeat;
+    }
+  </style>
+</head>
+<body style="background: black;">
+  <div class="container spread" style="display: none;">
+    <div class="canvas-container spread"></div>
+    <div class="top-section">
+      <a class="logo" href="#">
+        <div class="logo-desc hide">
+          Live P2P Network
+        </div>
+      </a>
+    </div>
+    <div class="controls-area">
+      <div class="data-flow"></div>
+      <div class="data-live" style="display:block;width:350px;">
+        <div class="data-live-count">-</div>
+        <div class="data-live-text">
+          实时在线
+        </div>
+      </div>
+      <div class="controls">
+        <div class="controls-slower" title="Reduce rotation speed">
+          <i class="i-slower"></i>
+        </div>
+        <div class="controls-rotate active" title="Enable/disable rotation">
+          <i class="i-rotate"></i>
+        </div>
+        <div class="controls-faster" title="Increase rotation speed">
+          <i class="i-faster"></i>
+        </div>
+        <div class="controls-reset" title="Reset">
+          <i class="i-reset"></i>
+        </div>
+        <div class="controls-info">
+          <i class="i-info"></i>
+        </div>
+      </div>
+      <div class="version">
+        v0.4.14
+      </div>
+    </div>
+    <div class="data-clock">
+      <div class="data-clock-time">
+        --:--:-- UTC
+      </div>
+    </div>
+  </div>
+  <div class="statistics">
+    <li><span class="statistics-span">最新版本: </span><span id="beta">v 1.1.0</span></li> 	
+    <li><span class="statistics-span">统计时间: </span><span id="stat_runtime">-</span></li>
+    <li><span class="statistics-span">HTTP 流量: </span><span id="stat_cdndata">-</span></li>
+    <li><span class="statistics-span">P2P  流量: </span><span id="stat_p2pdata">-</span></li>
+    <li><span class="statistics-span">HTTP 带宽: </span><span id="stat_cdnbw">-</span></li>
+    <li><span class="statistics-span">P2P  带宽: </span><span id="stat_p2pbw">-</span></li>
+    <li><span class="statistics-span">P2P使用率: </span><span id="stat_P2PRatio">-</span></li>
+    <li><span class="statistics-span">系统响应: </span><span id="stat_response">-</span> ms</li>
+    <li><a href="" target="_blank" style="color:white" id="redirect">-> 免费接入指南 <-</a></li>
+  </div>
+  <div class="initial-loader spread hide">
+    <img class="image-wrapper" />
+    <div class="image-wrapper"></div>
+    <div class="spinner">
+      <div class="rect1"></div>
+      <div class="rect2"></div>
+      <div class="rect3"></div>
+      <div class="rect4"></div>
+      <div class="rect5"></div>
+    </div>
+  </div>
+  <script>
+    var statws = [];
+    var concurrent = 0;
+    var randkey;
+    var klinktester_start = null;
+    var klinktester_end = null;
+    var klinktester = null;
+    var klinkOnly = true;
+    var mul = 10;
+    var wsAddr = "wss://signal.klink.tech/ws?id=klinktester";
+  </script>&quot;
+  <script src="public/js/globe.js?v=19"></script>&quot;
+  <script src="https://cdn.jsdelivr.net/npm/jquery@latest"></script>&quot;
+  <script>
+    function updateData() {
+      if(klinktester_end-klinktester_start>30000 && typeof(klinktester)=="function"){
+        klinktester();
+      }
+      $.ajax({
+        url: 'https://tracker.klink.tech/getStats',
+        dataType: 'json',
+        timeout: 3000,
+        success: function (data) {
+          $('#stat_cdndata').html(Math.round(data.http * mul * 100 / 1000 / 1000) / 100 + ' G');
+          $('#stat_p2pdata').html(Math.round(data.p2p * mul * 100 / 1000 / 1000) / 100 + ' G');
+          $('#stat_cdnbw').html(Math.round(data.avgHTTPBandwidth * 8 * mul * 100 / 1000 / 1000) / 100 + ' Gbps');
+          $('#stat_p2pbw').html(Math.round(data.avgP2PBandwidth * 8 * mul *100 / 1000 / 1000) / 100 + ' Gbps');
+          concurrent=data.peers;
+          $('#stat_P2PRatio').html(Math.round((data.avgP2PBandwidth / data.avgHTTPBandwidth)*10000) / 100 + ' %');
+          $('#stat_runtime').html(data.serverRuntime + ' s');
+        },
+        complete: function () {
+          setTimeout(function () {
+            updateData()
+          }, 5000);
+        }
+      });
+    };
+    updateData();
+    setInterval(function(){
+        $('#redirect').css('color',$('#redirect').css('color')=='rgb(255, 255, 255)' ? "red" : "white")
+    },300)
+  </script>
+</body>
+
+</html>

@@ -94,8 +94,10 @@ func Run() {
 	r := gin.Default()
 	r.Use(httpCors())
 
+	r.Static("/public", "./public")
+	r.LoadHTMLGlob("templates/*")
 	r.GET("/", func(c *gin.Context) {
-		c.String(200, "Hello World")
+		c.HTML(http.StatusOK, "index.tmpl", gin.H{})
 	})
 
 	r.POST("/channel", p2pChannel)
