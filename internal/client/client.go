@@ -24,6 +24,8 @@ type Client struct {
 	LocalNode     bool   // 是否本地节点
 	Timestamp     int64
 	NotFoundPeers []string // 记录没有找到的peer的队列
+	Latitude      float64  `json:"latitude"`
+	Longitude     float64  `json:"longitude"`
 }
 
 func New(peerId string, ws *websocket.Conn, localNode bool) *Client {
@@ -35,6 +37,11 @@ func New(peerId string, ws *websocket.Conn, localNode bool) *Client {
 	}
 }
 
+func (c *Client) SetLatLong(lat float64, long float64) {
+	c.Latitude = lat
+	c.Longitude = long
+}
+
 func (c *Client) SendMsgVersion(version int) error {
 	resp := SignalVerResponse{
 		Action: "ver",
@@ -43,7 +50,7 @@ func (c *Client) SendMsgVersion(version int) error {
 	b, err := json.Marshal(resp)
 	if err != nil {
 		// log.Error("json.Marshal", err)
-		fmt.Println("json.Marshal", err)
+		fmt.Println("SendMsgVersion json.Marshal", err)
 		return err
 	}
 	err = c.SendMessage(b)

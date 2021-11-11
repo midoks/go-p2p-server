@@ -78,7 +78,7 @@ func init() {
 					info := fmt.Sprintf("client %s is expired for %d, close it", cli.PeerId, now-cli.Timestamp)
 					fmt.Println(info)
 					if ok := hub.DoUnregister(cli.PeerId); ok {
-						queue.PushText("leave", cli.PeerId)
+						queue.PushTextLeave(cli.PeerId)
 						cli.Close()
 						count++
 					}

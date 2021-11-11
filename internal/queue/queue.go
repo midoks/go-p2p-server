@@ -27,6 +27,20 @@ func PushText(action string, val string) {
 	ValChan <- b
 }
 
+func PushTextLeave(action string, val string) {
+	a := make(MSliceMap, 0)
+	v := MSlice{Type: "leave", Data: val}
+	b := append(a, v)
+	ValChan <- b
+}
+
+func PushTextLatLang(action string, val string) {
+	a := make(MSliceMap, 0)
+	v := MSlice{Type: action, Data: val}
+	b := append(a, v)
+	ValChan <- b
+}
+
 func Receive() {
 
 	for {

@@ -40,8 +40,15 @@ func wsReqMethod(c *gin.Context) {
 	}
 	// defer ws.Close()
 
+	ipAddr := c.ClientIP()
+	if ipAddr == "127.0.0.1" {
+		ipAddr = tools.GetNetworkIp()
+	}
+
+	lat, lang := tools.GetLatLongByIpAddr(ipAddr)
 	clientId := client.New(id, ws, true)
 	clientId.SendMsgVersion(tools.GetVersionNum(conf.App.Version))
+	clientId.SetLatLong(lat, lang)
 	hub.DoRegister(clientId)
 
 	go func() {
