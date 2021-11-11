@@ -19,18 +19,18 @@ go mod tidy
 go mod vendor
 
 
-rm -rf imail
+#rm -rf go-p2p-server
 go build ./
 
 
-cd $TAGRT_DIR/imail/scripts
+cd $TAGRT_DIR/go-p2p-server/scripts
 
 sh make.sh
 
 systemctl daemon-reload
 
-service imail restart
+service gop2p restart
 
-cd $TAGRT_DIR/imail && ./imail -v
+cd $TAGRT_DIR/go-p2p-server && ./gop2p -v
 
 
