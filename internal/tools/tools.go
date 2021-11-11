@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/oschwald/geoip2-golang"
 )
@@ -59,4 +61,15 @@ func GetLatLongByIpAddr(ipAddr string) (float64, float64) {
 	record, _ := geoIp.City(ip)
 	return record.Location.Latitude, record.Location.Longitude
 
+}
+
+func RandId() string {
+	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+	var n = 5
+
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letterRunes[rand.New(rand.NewSource(time.Now().UnixNano())).Intn(len(letterRunes))]
+	}
+	return string(b)
 }

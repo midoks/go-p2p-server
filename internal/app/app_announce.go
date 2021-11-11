@@ -1,7 +1,7 @@
 package app
 
 import (
-	// "fmt"
+	"fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -11,7 +11,7 @@ import (
 	"github.com/midoks/go-p2p-server/internal/announce"
 	// "github.com/midoks/go-p2p-server/internal/hub"
 	"github.com/midoks/go-p2p-server/internal/queue"
-	// "github.com/midoks/go-p2p-server/internal/tools"
+	"github.com/midoks/go-p2p-server/internal/tools"
 	"github.com/midoks/go-p2p-server/internal/tools/uniqid"
 )
 
@@ -27,7 +27,6 @@ var mu sync.RWMutex
 
 //接收announce信息
 func p2pChannel(c *gin.Context) {
-	mu.Lock()
 
 	postJson := make(map[string]interface{}) //注意该结构接受的内容
 	c.BindJSON(&postJson)
@@ -42,6 +41,8 @@ func p2pChannel(c *gin.Context) {
 	fmt.Println("lang:", lang)
 
 	uniqidId := uniqid.New(uniqid.Params{"", false})
+	uniqidId = uniqidId + tools.RandId()
+
 	gPeers := []AnPeer{}
 	if channel, ok := postJson["channel"]; ok {
 		key := channel.(string)
@@ -56,9 +57,10 @@ func p2pChannel(c *gin.Context) {
 		}
 	}
 
-	queue.PushText("join", uniqidId)
+	// for i := 0; i < 99; i++ {
+	queue.PushText("join", uniqidId, lang, lat, -121.9829, 37.567)
+	// }
 
-	mu.Unlock()
 	c.JSON(http.StatusOK, gin.H{
 		"ret": 0,
 		"data": gin.H{
