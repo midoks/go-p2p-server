@@ -9,7 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/midoks/go-p2p-server/internal/announce"
-	"github.com/midoks/go-p2p-server/internal/hub"
 	// "github.com/midoks/go-p2p-server/internal/queue"
 	"github.com/midoks/go-p2p-server/internal/tools"
 	"github.com/midoks/go-p2p-server/internal/tools/uniqid"
@@ -113,16 +112,5 @@ func p2pChannelStats(c *gin.Context) {
 		"name":  "stats",
 		"peers": gPeers,
 		"data":  gin.H{},
-	})
-}
-
-func p2pGetStats(c *gin.Context) {
-
-	// info, _ := load.Avg()
-	// fmt.Printf("%v\n", info)
-
-	c.JSON(http.StatusOK, gin.H{
-		"peers":         hub.GetClientNum(),
-		"serverRuntime": time.Now().Format("2006-01-02 15:04:05"),
 	})
 }

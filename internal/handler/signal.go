@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"fmt"
+	// "fmt"
 
 	"github.com/midoks/go-p2p-server/internal/client"
 	"github.com/midoks/go-p2p-server/internal/hub"
@@ -29,10 +29,6 @@ func (s *SignalHandler) Handle() {
 			FromPeerId: s.Cli.PeerId,
 			Data:       s.Msg.Data,
 		}
-
-		// fmt.Println("signal handler:", s.Msg.Data)
-		fmt.Println(s.Cli.Latitude, s.Cli.Longitude)
-		fmt.Println(target.Latitude, target.Longitude)
 
 		if err := hub.SendJsonToClient(target, resp); err != nil {
 			// peerType := "local"

@@ -85,6 +85,8 @@ func Run() {
 	})
 
 	r.GET("/getStats", p2pGetStats)
+	r.GET("/count", websocketConnCount)
+
 	r.POST("/channel", p2pChannel)
 	r.POST("/channel/:channel_id/node/:peer/stats", p2pChannelStats)
 	r.POST("/channel/:channel_id/node/:peer/peers", p2pChannelPeers)
@@ -93,7 +95,6 @@ func Run() {
 	r.GET("/ws?id=:id", wsReqMethod)
 	r.GET("/trace", wsTrace)
 	r.GET("/trace?id=:id", wsTrace)
-	r.GET("/count", websocketConnCount)
 
 	r.Run(fmt.Sprintf(":%s", httpPort))
 }
