@@ -52,12 +52,12 @@ func PushConnection(action string, lat_from float64, lang_from float64, lat_to f
 	a := make(MSliceMap, 0)
 
 	from_ll := make([]float64, 0)
-	from_ll = append(from_ll, lat_from)
 	from_ll = append(from_ll, lang_from)
+	from_ll = append(from_ll, lat_from)
 
 	to_ll := make([]float64, 0)
-	to_ll = append(to_ll, lat_to)
 	to_ll = append(to_ll, long_to)
+	to_ll = append(to_ll, lat_to)
 
 	ll := LatLang{From: from_ll, To: to_ll}
 
