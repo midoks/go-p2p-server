@@ -13,8 +13,10 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/midoks/go-p2p-server/internal/client"
 	"github.com/midoks/go-p2p-server/internal/conf"
+	"github.com/midoks/go-p2p-server/internal/geoip"
 	"github.com/midoks/go-p2p-server/internal/handler"
 	"github.com/midoks/go-p2p-server/internal/hub"
+	"github.com/midoks/go-p2p-server/internal/logger"
 	"github.com/midoks/go-p2p-server/internal/queue"
 	"github.com/midoks/go-p2p-server/internal/tools"
 )
@@ -45,7 +47,7 @@ func wsReqMethod(c *gin.Context) {
 		ipAddr = tools.GetNetworkIp()
 	}
 
-	lat, lang := tools.GetLatLongByIpAddr(ipAddr)
+	lat, lang := geoip.GetLatLongByIpAddr(ipAddr)
 	queue.PushText("join", uniqidId, lang, lat, -121.9829, 37.567)
 
 	clientId := client.New(uniqidId, ws, true)

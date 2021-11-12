@@ -5,6 +5,9 @@ import (
 // "os"
 )
 
+// CustomConf returns the absolute path of custom configuration file that is used.
+var CustomConf string
+
 var (
 	App struct {
 

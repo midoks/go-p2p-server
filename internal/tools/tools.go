@@ -2,30 +2,30 @@ package tools
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"math/rand"
-	"net"
 	"net/http"
+	"os"
+	"os/user"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/oschwald/geoip2-golang"
 )
-
-var geoIp *geoip2.Reader
-
-func Init() {
-	geoIp, _ = geoip2.Open("data/GeoLite2-City.mmdb")
-	// defer geoIp.Close()
-}
 
 func GetVersionNum(ver string) int {
 	digs := strings.Split(ver, ".")
 	a, _ := strconv.Atoi(digs[0])
 	b, _ := strconv.Atoi(digs[1])
 	return a*10 + b
+}
+
+// IsFile returns true if given path exists as a file (i.e. not a directory).
+func IsFile(path string) bool {
+	f, e := os.Stat(path)
+	if e != nil {
+		return false
+	}
+	return !f.IsDir()
 }
 
 type Address struct {
@@ -54,15 +54,6 @@ func GetNetworkIp() string {
 	return ip
 }
 
-func GetLatLongByIpAddr(ipAddr string) (float64, float64) {
-	ip := net.ParseIP(ipAddr)
-
-	fmt.Println("ip:", ip)
-	record, _ := geoIp.City(ip)
-	return record.Location.Latitude, record.Location.Longitude
-
-}
-
 func RandId() string {
 	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 	var n = 5
@@ -72,4 +63,28 @@ func RandId() string {
 		b[i] = letterRunes[rand.New(rand.NewSource(time.Now().UnixNano())).Intn(len(letterRunes))]
 	}
 	return string(b)
+}
+
+// IsExist returns true if a file or directory exists.
+func IsExist(path string) bool {
+	_, err := os.Stat(path)
+	return err == nil || os.IsExist(err)
+}
+
+// CurrentUsername returns the username of the current user.
+func CurrentUsername() string {
+	username := os.Getenv("USER")
+	if len(username) > 0 {
+		return username
+	}
+
+	username = os.Getenv("USERNAME")
+	if len(username) > 0 {
+		return username
+	}
+
+	if user, err := user.Current(); err == nil {
+		username = user.Username
+	}
+	return username
 }

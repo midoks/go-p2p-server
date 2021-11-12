@@ -8,13 +8,17 @@ require (
 	github.com/gorilla/websocket v1.4.2
 	github.com/oschwald/geoip2-golang v1.5.0
 	github.com/phachon/go-logger v0.0.0-20191215032019-86e4227f71ea
+	github.com/pkg/errors v0.9.1
 	github.com/urfave/cli v1.22.5
+	gopkg.in/ini.v1 v1.64.0
+	gopkg.in/macaron.v1 v1.4.0
 )
 
 require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d // indirect
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
+	github.com/go-macaron/inject v0.0.0-20160627170012-d8a0b8677191 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
@@ -32,6 +36,7 @@ require (
 	github.com/russross/blackfriday/v2 v2.0.1 // indirect
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
+	github.com/unknwon/com v0.0.0-20190804042917-757f69c95f3e // indirect
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
 	golang.org/x/sys v0.0.0-20210423082822-04245dca01da // indirect
 	google.golang.org/protobuf v1.26.0 // indirect
