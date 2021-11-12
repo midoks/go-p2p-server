@@ -7,13 +7,18 @@ dirfilter:
 - scripts
 - vendor
 - logs
+- assets
+- .github
 ext:
 - go
 - tmpl
 enablerun: true
 action:
   before:
-  - echo "zzz start"
+  - find . -name ".DS_Store" -print -delete
+  - go generate internal/assets/conf/conf.go
+  - go generate internal/assets/public/public.go
+  - go generate internal/assets/templates/templates.go
   after:
   - echo "zzz end"
 link: https://github.com/midoks/zzz
