@@ -6,8 +6,8 @@ import (
 )
 
 type LatLang struct {
-	From []float64 `json:"from"`
-	To   []float64 `json:"to"`
+	From [][]float64 `json:"from"`
+	To   []float64   `json:"to"`
 }
 
 type MSlice struct {
@@ -26,18 +26,22 @@ func Init() {
 	ValChan = make(chan MSliceMap)
 }
 
-func PushText(action string, peer string, lat_from float64, lang_from float64, lat_to float64, long_to float64) {
+func PushText(action string, peer string, lat_from float64, lang_from float64, lat_to float64, lang_to float64) {
 	a := make(MSliceMap, 0)
 
 	from_ll := make([]float64, 0)
-	from_ll = append(from_ll, lat_from)
 	from_ll = append(from_ll, lang_from)
+	from_ll = append(from_ll, lat_from)
+	from_ll_arr := make([][]float64, 0)
+	from_ll_arr = append(from_ll_arr, from_ll)
+
+	// from_ll := [1][2]float64{{lang_from, lat_from}}
 
 	to_ll := make([]float64, 0)
+	to_ll = append(to_ll, lang_to)
 	to_ll = append(to_ll, lat_to)
-	to_ll = append(to_ll, long_to)
 
-	ll := LatLang{From: from_ll, To: to_ll}
+	ll := LatLang{From: from_ll_arr, To: to_ll}
 
 	ll_data := make([]LatLang, 0)
 	ll_data = append(ll_data, ll)
@@ -54,12 +58,16 @@ func PushConnection(action string, lat_from float64, lang_from float64, lat_to f
 	from_ll := make([]float64, 0)
 	from_ll = append(from_ll, lang_from)
 	from_ll = append(from_ll, lat_from)
+	from_ll_arr := make([][]float64, 0)
+	from_ll_arr = append(from_ll_arr, from_ll)
+
+	// from_ll := [1][2]float64{{lang_from, lat_from}}
 
 	to_ll := make([]float64, 0)
 	to_ll = append(to_ll, long_to)
 	to_ll = append(to_ll, lat_to)
 
-	ll := LatLang{From: from_ll, To: to_ll}
+	ll := LatLang{From: from_ll_arr, To: to_ll}
 
 	ll_data := make([]LatLang, 0)
 	ll_data = append(ll_data, ll)
