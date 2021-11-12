@@ -93,8 +93,6 @@ func Run() {
 
 	r.GET("/ws", wsReqMethod)
 	r.GET("/ws?id=:id", wsReqMethod)
-	r.GET("/trace", wsTrace)
-	r.GET("/trace?id=:id", wsTrace)
 
 	r.Run(fmt.Sprintf(":%s", httpPort))
 }

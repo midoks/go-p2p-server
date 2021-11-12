@@ -20953,7 +20953,7 @@
                     if(i.url==wsAddr+randkey){
                         klinktester_start = Date.now();
                         klinktester = function(){
-                            i.send(JSON.stringify({"action":"signal","peer_id":"klinktester"+randkey,"to_peer_id":"klinktester"+randkey}));
+                            i.send(JSON.stringify({"action":"signal","peer_id":"p2ptester"+randkey,"to_peer_id":"p2ptester"+randkey}));
                         }
                         klinktester();
                         u,i.send('{"action":"globe"}'),i.send('{"action":"get_stat"}')

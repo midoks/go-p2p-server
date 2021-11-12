@@ -20,6 +20,7 @@ type SignalVerResponse struct {
 
 type Client struct {
 	Ws            *websocket.Conn
+	MessageType   int
 	PeerId        string //唯一标识
 	LocalNode     bool   // 是否本地节点
 	Timestamp     int64
@@ -40,6 +41,10 @@ func New(peerId string, ws *websocket.Conn, localNode bool) *Client {
 func (c *Client) SetLatLong(lat float64, long float64) {
 	c.Latitude = lat
 	c.Longitude = long
+}
+
+func (c *Client) SetMT(mt int) {
+	c.MessageType = mt
 }
 
 func (c *Client) SendMsgVersion(version int) error {
@@ -63,7 +68,7 @@ func (c *Client) UpdateTs() {
 }
 
 func (c *Client) SendMessage(msg []byte) error {
-	return c.Ws.WriteMessage(1, msg)
+	return c.Ws.WriteMessage(c.MessageType, msg)
 }
 
 func (c *Client) Close() error {

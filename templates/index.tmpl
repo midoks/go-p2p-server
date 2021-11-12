@@ -82,7 +82,7 @@
     <li><span class="statistics-span">内存使用:  </span><span id="stat_memload">-</span></li>
     <li><span class="statistics-span">GoNum :   </span><span id="stat_goroutine_num">-</span></li>
     <li><span class="statistics-span">系统响应: </span><span id="stat_response">-</span> ms</li>
-    <li><a href="https://github.com/midoks/go-p2p-server" target="_blank" style="color:red" id="redirect">-> 免费接入指南 <-</a></li>
+    <li><a href="https://github.com/midoks/go-p2p-server" target="_blank" style="color:red" id="redirect">-> 接入指南 <-</a></li>
   </div>
   <div class="initial-loader spread hide">
     <img class="image-wrapper" />
@@ -106,13 +106,13 @@
     var mul = 10;
     var wsAddr = "";
     if (location.protocol == "https:"){
-       wsAddr = "wss://"+location.host+"/trace?id=p2ptester";
+       wsAddr = "wss://"+location.host+"/ws?id=p2ptester";
     } else {
-      wsAddr = "ws://"+location.host+"/trace?id=p2ptester";
+      wsAddr = "ws://"+location.host+"/ws?id=p2ptester";
     }
     console.log(wsAddr);
   </script>&quot;
-  <script src="public/js/globe.js?v=8"></script>&quot;
+  <script src="public/js/globe.js?v=1.0.0"></script>&quot;
   <script src="https://cdn.jsdelivr.net/npm/jquery@latest"></script>&quot;
   <script>
     function updateData() {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	// "log"
 	"bytes"
-	"encoding/json"
+	// "encoding/json"
 	"net/http"
 	// "runtime"
 	// "time"
@@ -42,28 +42,33 @@ func wsReqMethod(c *gin.Context) {
 	}
 	// defer ws.Close()
 
-	ipAddr := c.ClientIP()
-	if ipAddr == "127.0.0.1" {
-		ipAddr = tools.GetNetworkIp()
-	}
-
-	lat, lang := geoip.GetLatLongByIpAddr(ipAddr)
-	queue.PushText("join", uniqidId, lang, lat, -121.9829, 37.567)
-
 	clientId := client.New(uniqidId, ws, true)
 	clientId.SendMsgVersion(tools.GetVersionNum(conf.App.Version))
-	clientId.SetLatLong(lat, lang)
 	hub.DoRegister(clientId)
+
+	go func() {
+		ipAddr := c.ClientIP()
+		if ipAddr == "127.0.0.1" {
+			ipAddr = tools.GetNetworkIp()
+		}
+
+		lat, lang := geoip.GetLatLongByIpAddr(ipAddr)
+		clientId.SetLatLong(lat, lang)
+
+		go func() {
+			queue.PushText("join", uniqidId, lat, lang, -121.9829, 37.567)
+		}()
+	}()
 
 	go func() {
 		for {
 
-			_, message, err := ws.ReadMessage()
+			mt, message, err := ws.ReadMessage()
 			if err != nil {
-				logger.Errorf("read websocket msg: %v", err)
-				fmt.Println("err:", err, "id:")
+				logger.Errorf("ws websocket err: %v", err)
 				break
 			}
+			clientId.SetMT(mt)
 
 			// fmt.Println("go func:", string(message))
 			data := bytes.TrimSpace(bytes.Replace(message, []byte{'\n'}, []byte{' '}, -1))
@@ -76,38 +81,5 @@ func wsReqMethod(c *gin.Context) {
 			}
 		}
 	}()
-}
 
-func wsTrace(c *gin.Context) {
-	ws, err := upGrader.Upgrade(c.Writer, c.Request, nil)
-	if err != nil {
-		return
-	}
-	uniqidId := c.Query("id")
-	clientId := client.New(uniqidId, ws, true)
-	clientId.SendMsgVersion(tools.GetVersionNum(conf.App.Version))
-
-	go func() {
-		for {
-
-			data := <-queue.ValChan
-			fmt.Println("queue", data)
-
-			b, err := json.Marshal(data)
-			if err != nil {
-				// log.Error("json.Marshal", err)
-				fmt.Println("trace json.Marshal", err)
-			} else {
-				ws.WriteMessage(1, b)
-			}
-
-			// _, message, err := ws.ReadMessage()
-			// if err != nil {
-			// 	logger.Errorf("read websocket msg: %v", err)
-			// 	fmt.Println("err:", err, "id:")
-			// 	break
-			// }
-
-		}
-	}()
 }

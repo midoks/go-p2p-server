@@ -24,10 +24,8 @@ type SignalResp struct {
 }
 
 func NewHandler(message []byte, cli *client.Client) (Handler, error) {
-
 	signal := SignalMsg{}
 	if err := json.Unmarshal(message, &signal); err != nil {
-		//log.Println(err)
 		return nil, err
 	}
 	return NewHandlerMsg(signal, cli)
@@ -41,6 +39,8 @@ func NewHandlerMsg(signal SignalMsg, cli *client.Client) (Handler, error) {
 		return &HeartbeatHandler{Cli: cli}, nil
 	case "reject":
 		return &RejectHandler{Msg: &signal, Cli: cli}, nil
+	case "get_stat":
+		return &StatsHandler{Msg: &signal, Cli: cli}, nil
 	default:
 		return &ExceptionHandler{Msg: &signal, Cli: cli}, nil
 	}

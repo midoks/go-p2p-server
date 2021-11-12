@@ -1,7 +1,7 @@
 package geoip
 
 import (
-	"fmt"
+	// "fmt"
 	"net"
 	// "net/http"
 
@@ -17,7 +17,7 @@ func init() {
 func GetLatLongByIpAddr(ipAddr string) (float64, float64) {
 	ip := net.ParseIP(ipAddr)
 
-	fmt.Println("ip:", ip)
+	// fmt.Println("ip:", ip)
 	record, _ := geoIp.City(ip)
 	return record.Location.Latitude, record.Location.Longitude
 
