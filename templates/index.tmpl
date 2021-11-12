@@ -9,7 +9,7 @@
   <meta name="keywords" content="p2p, globe, network, realtime, live, webrtc, content delivery network, content distribution network" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />
   <link rel="shortcut icon" href="public/favicon.png">
-  <link rel="stylesheet" href="public/css/globe.css" />
+  <link rel="stylesheet" href="public/css/globe.css?v={{ .version }}" />
   <style>
     .data-flow {
       color: #fff;
@@ -75,7 +75,7 @@
     </div>
   </div>
   <div class="statistics">
-    <li><span class="statistics-span">最新版本: </span><span id="beta">v 1.0.0</span></li> 	
+    <li><span class="statistics-span">最新版本: </span><span id="beta">v{{ .version }}</span></li> 	
     <li><span class="statistics-span">系统时间: </span><span id="stat_runtime">-</span></li>
     <li><span class="statistics-span">系统负载: </span><span id="stat_sysload">-</span></li>
     <li><span class="statistics-span">CPU负载:  </span><span id="stat_cpuload">-</span></li>
@@ -112,8 +112,8 @@
     }
     console.log(wsAddr);
   </script>&quot;
-  <script src="public/js/globe.js?v=1.0.0"></script>&quot;
-  <script src="https://cdn.jsdelivr.net/npm/jquery@latest"></script>&quot;
+  <script src="public/js/globe.js?v={{ .version }}"></script>&quot;
+  <script src="public/js/jquery.js?v={{ .version }}"></script>&quot;
   <script>
     function updateData() {
       if(klinktester_end-klinktester_start>30000 && typeof(klinktester)=="function"){

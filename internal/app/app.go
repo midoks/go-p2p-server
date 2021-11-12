@@ -81,7 +81,7 @@ func Run() {
 	r.Static("/public", "./public")
 	r.LoadHTMLGlob("templates/*")
 	r.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{})
+		c.HTML(http.StatusOK, "index.tmpl", gin.H{"version": conf.App.Version})
 	})
 
 	r.GET("/getStats", p2pGetStats)
