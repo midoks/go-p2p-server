@@ -1,7 +1,7 @@
 package app
 
 import (
-	"fmt"
+	// "fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -10,7 +10,7 @@ import (
 
 	"github.com/midoks/go-p2p-server/internal/announce"
 	"github.com/midoks/go-p2p-server/internal/hub"
-	"github.com/midoks/go-p2p-server/internal/queue"
+	// "github.com/midoks/go-p2p-server/internal/queue"
 	"github.com/midoks/go-p2p-server/internal/tools"
 	"github.com/midoks/go-p2p-server/internal/tools/uniqid"
 )
@@ -31,15 +31,6 @@ func p2pChannel(c *gin.Context) {
 	postJson := make(map[string]interface{}) //注意该结构接受的内容
 	c.BindJSON(&postJson)
 
-	ipAddr := c.ClientIP()
-	if ipAddr == "127.0.0.1" {
-		ipAddr = tools.GetNetworkIp()
-	}
-
-	lat, lang := tools.GetLatLongByIpAddr(ipAddr)
-	fmt.Println("lat:", lat)
-	fmt.Println("lang:", lang)
-
 	uniqidId := uniqid.New(uniqid.Params{"", false})
 	uniqidId = uniqidId + tools.RandId()
 
@@ -56,10 +47,6 @@ func p2pChannel(c *gin.Context) {
 			announce.Set(key, uniqidId)
 		}
 	}
-
-	// for i := 0; i < 99; i++ {
-	queue.PushText("join", uniqidId, lang, lat, -121.9829, 37.567)
-	// }
 
 	c.JSON(http.StatusOK, gin.H{
 		"ret": 0,
@@ -97,7 +84,7 @@ func p2pChannelPeers(c *gin.Context) {
 			"id":              peers,
 			"peers":           gPeers,
 			"report_interval": 3,
-			"v":               "scadasd",
+			"v":               peers,
 		},
 	})
 }
@@ -130,6 +117,9 @@ func p2pChannelStats(c *gin.Context) {
 }
 
 func p2pGetStats(c *gin.Context) {
+
+	// info, _ := load.Avg()
+	// fmt.Printf("%v\n", info)
 
 	c.JSON(http.StatusOK, gin.H{
 		"peers":         hub.GetClientNum(),

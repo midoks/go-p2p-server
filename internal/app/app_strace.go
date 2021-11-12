@@ -30,9 +30,9 @@ var upGrader = websocket.Upgrader{
 func wsReqMethod(c *gin.Context) {
 	// c.Request.ParseForm()
 	// id := c.Request.Form.Get("id")
-	id := c.Query("id")
+	uniqidId := c.Query("id")
 
-	fmt.Println("websocket id:[", id, "]")
+	fmt.Println("websocket id:[", uniqidId, "]")
 	//use webSocket pro
 	ws, err := upGrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
@@ -46,7 +46,9 @@ func wsReqMethod(c *gin.Context) {
 	}
 
 	lat, lang := tools.GetLatLongByIpAddr(ipAddr)
-	clientId := client.New(id, ws, true)
+	queue.PushText("join", uniqidId, lang, lat, -121.9829, 37.567)
+
+	clientId := client.New(uniqidId, ws, true)
 	clientId.SendMsgVersion(tools.GetVersionNum(conf.App.Version))
 	clientId.SetLatLong(lat, lang)
 	hub.DoRegister(clientId)
@@ -79,8 +81,8 @@ func wsTrace(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	id := c.Query("id")
-	clientId := client.New(id, ws, true)
+	uniqidId := c.Query("id")
+	clientId := client.New(uniqidId, ws, true)
 	clientId.SendMsgVersion(tools.GetVersionNum(conf.App.Version))
 
 	go func() {
