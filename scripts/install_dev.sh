@@ -19,6 +19,10 @@ go mod tidy
 go mod vendor
 
 
+go generate internal/assets/conf/conf.go
+go generate internal/assets/public/public.go
+go generate internal/assets/templates/templates.go
+
 #rm -rf go-p2p-server
 go build ./
 mv go-p2p-server gop2p
