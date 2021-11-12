@@ -16,7 +16,4 @@
 go-p2p-server
 vendor
 logs
-internal/assets/conf/conf_gen.go
-internal/assets/public/public_gen.go
-internal/assets/templates/templates_gen.go
 custom
