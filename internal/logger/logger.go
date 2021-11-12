@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"fmt"
+	// "fmt"
 
 	go_logger "github.com/phachon/go-logger"
 )
@@ -9,7 +9,7 @@ import (
 var logger *go_logger.Logger
 
 func init() {
-	fmt.Println("ddd logger")
+	// fmt.Println("ddd logger")
 	logger = go_logger.NewLogger()
 
 	// 文件输出配置
