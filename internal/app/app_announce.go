@@ -132,7 +132,7 @@ func p2pChannelStats(c *gin.Context) {
 func p2pGetStats(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
-		"peers": hub.GetClientNum(),
-		"data":  gin.H{},
+		"peers":         hub.GetClientNum(),
+		"serverRuntime": time.Now().Format("2006-01-02 15:04:05"),
 	})
 }

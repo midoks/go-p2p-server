@@ -76,7 +76,7 @@
   </div>
   <div class="statistics">
     <li><span class="statistics-span">最新版本: </span><span id="beta">v 1.0.0</span></li> 	
-    <li><span class="statistics-span">统计时间: </span><span id="stat_runtime">-</span></li>
+    <li><span class="statistics-span">系统时间: </span><span id="stat_runtime">-</span></li>
     <li><span class="statistics-span">HTTP 流量: </span><span id="stat_cdndata">-</span></li>
     <li><span class="statistics-span">P2P  流量: </span><span id="stat_p2pdata">-</span></li>
     <li><span class="statistics-span">HTTP 带宽: </span><span id="stat_cdnbw">-</span></li>
@@ -135,11 +135,12 @@
           $('#stat_cdndata').html(Math.round(data.http * mul * 100 / 1000 / 1000) / 100 + ' G');
           $('#stat_p2pdata').html(Math.round(data.p2p * mul * 100 / 1000 / 1000) / 100 + ' G');
           $('#stat_cdnbw').html(Math.round(data.avgHTTPBandwidth * 8 * mul * 100 / 1000 / 1000) / 100 + ' Gbps');
-          $('#stat_p2pbw').html(Math.round(data.avgP2PBandwidth * 8 * mul *100 / 1000 / 1000) / 100 + ' Gbps');
+          $('#stat_p2pbw').html(Math.round(data.avgP2PBandwidth * 8 * mul *100 / 1000 / 1000) / 100 + ' Gbps');      
+          $('#stat_P2PRatio').html(Math.round((data.avgP2PBandwidth / data.avgHTTPBandwidth)*10000) / 100 + ' %');
+          $('#stat_runtime').html(data.serverRuntime);
+
           concurrent=data.peers;
           $('.data-live .data-live-count').html(data.peers);
-          $('#stat_P2PRatio').html(Math.round((data.avgP2PBandwidth / data.avgHTTPBandwidth)*10000) / 100 + ' %');
-          $('#stat_runtime').html(data.serverRuntime + ' s');
         },
         complete: function () {
           setTimeout(function () {
