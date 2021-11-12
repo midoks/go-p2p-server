@@ -131,8 +131,8 @@
         dataType: 'json',
         timeout: 3000,
         success: function (data) {
-          $('#stat_sysload').html(Math.round(data.cpu) + ' %');
-          $('#stat_cpuload').html(Math.round(data.load_avg_per) + ' %');
+          $('#stat_sysload').html(Math.round(data.load_avg_per) + ' %');
+          $('#stat_cpuload').html(Math.round(data.cpu) + ' %');
           $('#stat_memload').html(Math.round(data.mem_per) + ' %');
           $('#stat_goroutine_num').html(data.goroutine_num);
           $('#stat_runtime').html(data.server_runtime);
