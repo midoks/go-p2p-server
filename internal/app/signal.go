@@ -67,7 +67,6 @@ func wsSignal(c *gin.Context) {
 			}
 			clientId.SetMT(mt)
 
-			// fmt.Println("go func:", string(message))
 			data := bytes.TrimSpace(bytes.Replace(message, []byte{'\n'}, []byte{' '}, -1))
 			hdr, err := handler.NewHandler(data, clientId)
 			if err != nil {

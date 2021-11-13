@@ -23,7 +23,7 @@ var (
 )
 
 func Init() {
-	ValChan = make(chan MSliceMap, 100)
+	ValChan = make(chan MSliceMap)
 }
 
 func PushText(action string, peer string, lat_from float64, lang_from float64, lat_to float64, lang_to float64) {
@@ -96,8 +96,10 @@ func PushTextLatLang(action string, val string) {
 }
 
 func Push(msg MSliceMap) {
-	// fmt.Println(msg)
+	fmt.Println("Push start")
 	ValChan <- msg
+	fmt.Println(msg)
+	fmt.Println("Push end")
 }
 
 func Receive() {
