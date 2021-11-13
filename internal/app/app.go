@@ -9,8 +9,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/midoks/go-p2p-server/internal/conf"
+	"github.com/midoks/go-p2p-server/internal/geoip"
 	"github.com/midoks/go-p2p-server/internal/hub"
-	// "github.com/midoks/go-p2p-server/internal/logger"
+	"github.com/midoks/go-p2p-server/internal/logger"
 	"github.com/midoks/go-p2p-server/internal/queue"
 	// "github.com/midoks/go-p2p-server/internal/tools"
 )
@@ -39,6 +40,8 @@ func httpCors() gin.HandlerFunc {
 
 func init() {
 	conf.Init()
+	logger.Init()
+	geoip.Init()
 
 	//App
 	queue.Init()

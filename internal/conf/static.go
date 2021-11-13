@@ -19,4 +19,26 @@ var (
 		RunUser   string
 		RunMode   string
 	}
+
+	Web struct {
+		HttpAddr string `ini:"http_addr"`
+		HttpPort string `ini:"http_port"`
+	}
+
+	// log
+	Log struct {
+		Format   string
+		RootPath string
+	}
+
+	Redis struct {
+		Enable   bool
+		Address  string
+		Password string
+		Bb       int
+	}
+
+	Geo struct {
+		Path string
+	}
 )

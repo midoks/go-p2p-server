@@ -30,10 +30,8 @@ var upGrader = websocket.Upgrader{
 
 //websocket实现
 func wsReqMethod(c *gin.Context) {
-	// c.Request.ParseForm()
-	// id := c.Request.Form.Get("id")
-	uniqidId := c.Query("id")
 
+	uniqidId := c.Query("id")
 	fmt.Println("websocket id:[", uniqidId, "]")
 
 	//use webSocket pro
@@ -64,7 +62,7 @@ func wsReqMethod(c *gin.Context) {
 		for {
 			mt, message, err := ws.ReadMessage()
 			if err != nil {
-				logger.Errorf("ws websocket error: %v", err)
+				logger.Errorf("path[ws][%s] error: %v", uniqidId, err)
 				break
 			}
 			clientId.SetMT(mt)
@@ -74,7 +72,7 @@ func wsReqMethod(c *gin.Context) {
 			hdr, err := handler.NewHandler(data, clientId)
 			if err != nil {
 				clientId.UpdateTs()
-				logger.Errorf("singal init hander:%v", err)
+				logger.Errorf("path[ws][%s] hander error: %v", uniqidId, err)
 			} else {
 				hdr.Handle()
 			}
