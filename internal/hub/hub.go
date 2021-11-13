@@ -1,8 +1,9 @@
 package hub
 
 import (
+	// "fmt"
 	"encoding/json"
-	"fmt"
+	"errors"
 
 	"github.com/midoks/go-p2p-server/internal/client"
 	"github.com/midoks/go-p2p-server/internal/hub/cmap"
@@ -24,13 +25,13 @@ func GetInstance() *Hub {
 	return h
 }
 
-func DoRegister(client *client.Client) {
-	fmt.Println("hub DoRegister:", client.PeerId)
+func DoRegister(client *client.Client) error {
 	if client.PeerId != "" {
 		h.Clients.Set(client.PeerId, client)
 	} else {
-		panic("DoRegister")
+		return errors.New("DoRegister error!")
 	}
+	return nil
 }
 
 func Has(key string) bool {
@@ -54,7 +55,6 @@ func RemoveClient(id string) {
 }
 
 func DoUnregister(peerId string) bool {
-	fmt.Println("hub DoUnregister :", peerId)
 	if peerId == "" {
 		return false
 	}

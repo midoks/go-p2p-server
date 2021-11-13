@@ -35,12 +35,12 @@ func wsReqMethod(c *gin.Context) {
 	uniqidId := c.Query("id")
 
 	fmt.Println("websocket id:[", uniqidId, "]")
+
 	//use webSocket pro
 	ws, err := upGrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		return
 	}
-	// defer ws.Close()
 
 	clientId := client.New(uniqidId, ws, true)
 	clientId.SendMsgVersion(tools.GetVersionNum(conf.App.Version))
@@ -62,10 +62,9 @@ func wsReqMethod(c *gin.Context) {
 
 	go func() {
 		for {
-
 			mt, message, err := ws.ReadMessage()
 			if err != nil {
-				logger.Errorf("ws websocket err: %v", err)
+				logger.Errorf("ws websocket error: %v", err)
 				break
 			}
 			clientId.SetMT(mt)
@@ -75,11 +74,10 @@ func wsReqMethod(c *gin.Context) {
 			hdr, err := handler.NewHandler(data, clientId)
 			if err != nil {
 				clientId.UpdateTs()
-				logger.Errorf("NewHandler %v", err)
+				logger.Errorf("singal init hander:%v", err)
 			} else {
 				hdr.Handle()
 			}
 		}
 	}()
-
 }

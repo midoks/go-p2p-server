@@ -7,6 +7,7 @@ import (
 	// "runtime"
 
 	"github.com/midoks/go-p2p-server/internal/client"
+	"github.com/midoks/go-p2p-server/internal/logger"
 	"github.com/midoks/go-p2p-server/internal/queue"
 )
 
@@ -18,18 +19,16 @@ type StatsHandler struct {
 func (s *StatsHandler) Handle() {
 	go func() {
 		for {
-
 			data := <-queue.ValChan
 			fmt.Println("queue", data)
 
 			b, err := json.Marshal(data)
 			if err != nil {
-				// log.Error("json.Marshal", err)
-				fmt.Println("trace json.Marshal", err)
+				logger.Errorf("queue json.Marshal error:%v", err)
 			} else {
 				err := s.Cli.SendMessage(b)
 				if err != nil {
-					break
+					s.Cli.Close()
 				}
 			}
 		}

@@ -34,7 +34,6 @@ func p2pGetStats(c *gin.Context) {
 
 	//mem
 	memInfo, _ := mem.VirtualMemory()
-	runtime.NumGoroutine()
 
 	c.JSON(http.StatusOK, gin.H{
 		"peers":          hub.GetClientNum(),

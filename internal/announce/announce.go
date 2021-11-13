@@ -1,7 +1,7 @@
 package announce
 
 import (
-	"fmt"
+	// "fmt"
 	"time"
 
 	"github.com/go-redis/redis"
@@ -27,11 +27,16 @@ func Get(key string) ([]string, bool) {
 
 	val, err := rdb.SMembers(key).Result()
 
-	fmt.Println("redis get:", val, err)
+	if err != nil {
+		return []string{}, false
+	}
 
-	ok, err := rdb.Expire(key, 60*time.Second).Result()
-	fmt.Printf("ok=%v err=%v\n", ok, err)
+	_, err = rdb.Expire(key, 60*time.Second).Result()
+	if err != nil {
+		return []string{}, false
+	}
 
+	//删除过期数据
 	for _, k := range val {
 		_, err := rdb.Get(k).Result()
 		if err != nil {
@@ -55,17 +60,23 @@ func SetPeerHeartbeat(peer string, expiration time.Duration) (interface{}, error
 	return d, err
 }
 
-func Set(key, val string) {
+func Set(key, val string) error {
 
 	_, err := rdb.Set(val, "1", 60*time.Second).Result()
-	fmt.Println("redism:", err)
+	if err != nil {
+		return err
+	}
 
-	ret, err := rdb.SAdd(key, val).Result()
-	fmt.Println("redis:", ret, err)
+	_, err = rdb.SAdd(key, val).Result()
+	if err != nil {
+		return err
+	}
 
 	_, err = rdb.Expire(key, 60*time.Second).Result()
-	fmt.Printf(" err=%v\n", err)
-
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func DelKeyValue(key, val string) bool {

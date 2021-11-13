@@ -4,6 +4,7 @@ import (
 	"fmt"
 	// "log"
 	"net/http"
+	"runtime"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -82,6 +83,12 @@ func Run() {
 	r.LoadHTMLGlob("templates/*")
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{"version": conf.App.Version})
+	})
+
+	r.GET("/t", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"gnum": runtime.NumGoroutine(),
+		})
 	})
 
 	r.GET("/getStats", p2pGetStats)

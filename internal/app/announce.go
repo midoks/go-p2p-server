@@ -10,6 +10,7 @@ import (
 
 	"github.com/midoks/go-p2p-server/internal/announce"
 	// "github.com/midoks/go-p2p-server/internal/queue"
+	"github.com/midoks/go-p2p-server/internal/hub"
 	"github.com/midoks/go-p2p-server/internal/tools"
 	"github.com/midoks/go-p2p-server/internal/tools/uniqid"
 )
@@ -96,8 +97,13 @@ func p2pChannelStats(c *gin.Context) {
 	channel_id := c.Param("channel_id")
 	peers := c.Param("peer")
 
+	//延长缓冲时间
 	announce.SetPeerHeartbeat(peers, 60*time.Second)
+	if c, ok := hub.GetClient(peers); ok {
+		c.UpdateTs()
+	}
 
+	//查找缓冲中的peer
 	gPeers := []AnPeer{}
 	key := channel_id
 	if peer, ok := announce.Get(key); ok {
