@@ -3,8 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	// "net/http"
-	// "runtime"
+	"time"
 
 	"github.com/midoks/go-p2p-server/internal/client"
 	"github.com/midoks/go-p2p-server/internal/logger"
@@ -17,20 +16,25 @@ type StatsHandler struct {
 }
 
 func (s *StatsHandler) Handle() {
-	go func() {
-		for {
-			data := <-queue.ValChan
-			fmt.Println("queue", data)
+	for {
 
+		select {
+		case data := <-queue.ValChan:
 			b, err := json.Marshal(data)
 			if err != nil {
-				logger.Errorf("queue json.Marshal error:%v", err)
+				logger.Errorf("stats handler json error: %v", err)
 			} else {
 				err := s.Cli.SendMessage(b)
 				if err != nil {
 					s.Cli.Close()
+					break
 				}
 			}
+		case <-time.After(1 * time.Second):
+			fmt.Println("oveer...")
+			s.Cli.Close()
+			break
+
 		}
-	}()
+	}
 }

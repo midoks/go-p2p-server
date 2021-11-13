@@ -53,7 +53,7 @@ func Init() error {
 		cfg.Section("log").Key("root_path").SetValue("logs")
 
 		cfg.Section("web").Key("http_addr").SetValue("0.0.0.0")
-		cfg.Section("web").Key("http_port").SetValue("1080")
+		cfg.Section("web").Key("http_port").SetValue("3030")
 
 		cfg.Section("redis").Key("enable").SetValue("false")
 		cfg.Section("redis").Key("address").SetValue("127.0.0.1:6379")

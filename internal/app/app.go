@@ -78,7 +78,6 @@ func websocketConnCount(c *gin.Context) {
 }
 
 func Run() {
-	httpPort := "3030"
 	r := gin.Default()
 	r.Use(httpCors())
 
@@ -101,8 +100,8 @@ func Run() {
 	r.POST("/channel/:channel_id/node/:peer/stats", p2pChannelStats)
 	r.POST("/channel/:channel_id/node/:peer/peers", p2pChannelPeers)
 
-	r.GET("/ws", wsReqMethod)
-	r.GET("/ws?id=:id", wsReqMethod)
+	r.GET("/ws", wsSignal)
+	r.GET("/ws?id=:id", wsSignal)
 
-	r.Run(fmt.Sprintf(":%s", httpPort))
+	r.Run(fmt.Sprintf(":%s", conf.Web.HttpPort))
 }

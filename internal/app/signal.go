@@ -29,7 +29,7 @@ var upGrader = websocket.Upgrader{
 }
 
 //websocket实现
-func wsReqMethod(c *gin.Context) {
+func wsSignal(c *gin.Context) {
 
 	uniqidId := c.Query("id")
 	fmt.Println("websocket id:[", uniqidId, "]")

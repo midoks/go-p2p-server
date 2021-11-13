@@ -97,7 +97,7 @@ func PushTextLatLang(action string, val string) {
 
 func Push(msg MSliceMap) {
 	// fmt.Println(msg)
-	// ValChan <- msg
+	ValChan <- msg
 }
 
 func Receive() {
