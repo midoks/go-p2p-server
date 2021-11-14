@@ -2,7 +2,7 @@
 Web P2P 服务器，依托[cdnbye](httsp://www.cdnbye.com)的源码和[klink.tech](https://klink.tech)页面而开发的服务器。
 
 # 测试地址
-- https://gop2p.cachecha.com/
+- https://gop2p.cachecha.com
 
 ## 接入
 ```
