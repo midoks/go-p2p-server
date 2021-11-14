@@ -71,7 +71,10 @@ func wsSignal(c *gin.Context) {
 			if err != nil {
 				hub.DoUnregister(uniqidId)
 				queue.PushTextLeave(uniqidId)
-				logger.Errorf("path[ws][%s] %v", uniqidId, err)
+				announce.DelPeer(uniqidId)
+
+				// 主动关闭,非异常
+				// logger.Debugf("path[ws][%s] %v", uniqidId, err)
 				break
 			}
 			clientId.SetMT(mt)

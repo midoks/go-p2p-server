@@ -87,6 +87,11 @@ func Set(key, val string) error {
 	return nil
 }
 
+func DelPeer(peer string) error {
+	_, err := rdb.Del(peer).Result()
+	return err
+}
+
 func DelKeyValue(key, val string) bool {
 	_, err := rdb.SRem(key, val).Result()
 	if err == nil {
