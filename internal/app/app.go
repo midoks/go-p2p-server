@@ -96,9 +96,13 @@ func Run() {
 			fmt.Println("ip:", err)
 		}
 
+		lat, lang := geoip.GetLatLongByIpAddr(ip)
+
 		c.JSON(http.StatusOK, gin.H{
 			"gnum": runtime.NumGoroutine(),
 			"ip":   ip,
+			"lat":  lat,
+			"lang": lang,
 		})
 	})
 
