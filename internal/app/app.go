@@ -98,8 +98,10 @@ func init() {
 }
 
 func info(c *gin.Context) {
+	m := hub.GetAllKey()
 	c.JSON(http.StatusOK, gin.H{
-		"clinet_num": fmt.Sprintf("%d", hub.GetClientNum()),
+		"cliett_num": fmt.Sprintf("%d", hub.GetClientNum()),
+		"peers":      m,
 	})
 }
 

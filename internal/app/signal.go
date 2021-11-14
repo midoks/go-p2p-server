@@ -63,9 +63,6 @@ func wsSignal(c *gin.Context) {
 			queue.PushText("join", uniqidId, lat, lang, to_lat, to_lang)
 		}
 
-	}()
-
-	go func() {
 		for {
 			mt, message, err := ws.ReadMessage()
 			if err != nil {
@@ -88,5 +85,6 @@ func wsSignal(c *gin.Context) {
 				hdr.Handle()
 			}
 		}
+
 	}()
 }

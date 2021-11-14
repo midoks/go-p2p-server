@@ -65,6 +65,18 @@ func DoUnregister(peerId string) bool {
 	return false
 }
 
+func ClearAll() {
+	h.Clients.Clear()
+}
+
+func GetAllKey() []string {
+	v := make([]string, 0)
+	for item := range h.Clients.IterBuffered() {
+		v = append(v, item.Key)
+	}
+	return v
+}
+
 // send json object to a client with peerId
 func SendJsonToClient(target *client.Client, value interface{}) error {
 	b, err := json.Marshal(value)
