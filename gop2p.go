@@ -9,7 +9,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-const Version = "2.7.0"
+const Version = "1.0.0"
 const AppName = "gop2p"
 
 func init() {
