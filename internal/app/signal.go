@@ -34,6 +34,8 @@ func wsSignal(c *gin.Context) {
 	//use webSocket pro
 	ws, err := upGrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
+		logger.Errorf("ws fail: %v", err)
+		ws.Close()
 		return
 	}
 
@@ -51,18 +53,15 @@ func wsSignal(c *gin.Context) {
 		lat, lang := geoip.GetLatLongByIpAddr(ipAddr)
 		clientId.SetLatLong(lat, lang)
 
-		go func() {
-			to_lat, to_lang, err := announce.GetServerLatLang()
-			if err != nil {
-				to_lat, to_lang = 0, 0
-			}
+		to_lat, to_lang, err := announce.GetServerLatLang()
+		if err != nil {
+			to_lat, to_lang = 0, 0
+		}
 
-			if strings.HasPrefix(uniqidId, "p2p") {
-			} else {
-				queue.PushText("join", uniqidId, lat, lang, to_lat, to_lang)
-			}
+		if !strings.HasPrefix(uniqidId, "p2p") {
+			queue.PushText("join", uniqidId, lat, lang, to_lat, to_lang)
+		}
 
-		}()
 	}()
 
 	go func() {
