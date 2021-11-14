@@ -103,14 +103,17 @@ func Run() {
 
 		fmt.Println("client", ipAddr)
 
-		lat, lang := geoip.GetLatLongByIpAddr("172.67.209.65")
+		lat, lang := geoip.GetLatLongByIpAddr("240e:398:380:7dd0:e1e5:bf1a:45ae:20e0")
 
 		fmt.Println(lat, lang)
+
+		ipNet := tools.GetNetworkIp()
 
 		c.JSON(http.StatusOK, gin.H{
 			"gnum":      runtime.NumGoroutine(),
 			"ip":        ip,
 			"client_ip": ipAddr,
+			"net_ip":    ipNet,
 			"lat":       lat,
 			"lang":      lang,
 		})
