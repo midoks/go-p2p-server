@@ -96,13 +96,23 @@ func Run() {
 			fmt.Println("ip:", err)
 		}
 
-		lat, lang := geoip.GetLatLongByIpAddr(ip)
+		ipAddr := c.ClientIP()
+		if ipAddr == "127.0.0.1" {
+			ipAddr = tools.GetNetworkIp()
+		}
+
+		fmt.Println("client", ipAddr)
+
+		lat, lang := geoip.GetLatLongByIpAddr("172.67.209.65")
+
+		fmt.Println(lat, lang)
 
 		c.JSON(http.StatusOK, gin.H{
-			"gnum": runtime.NumGoroutine(),
-			"ip":   ip,
-			"lat":  lat,
-			"lang": lang,
+			"gnum":      runtime.NumGoroutine(),
+			"ip":        ip,
+			"client_ip": ipAddr,
+			"lat":       lat,
+			"lang":      lang,
 		})
 	})
 
