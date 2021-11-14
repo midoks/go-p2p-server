@@ -70,6 +70,7 @@ func wsSignal(c *gin.Context) {
 			mt, message, err := ws.ReadMessage()
 			if err != nil {
 				hub.DoUnregister(uniqidId)
+				queue.PushTextLeave(uniqidId)
 				logger.Errorf("path[ws][%s] %v", uniqidId, err)
 				break
 			}
