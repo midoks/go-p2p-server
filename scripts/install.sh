@@ -10,7 +10,7 @@ check_go_environment() {
 load_vars() {
 	OS=$(uname | tr '[:upper:]' '[:lower:]')
 
-	VERSION=$(get_latest_release "midoks/gop2p")
+	VERSION=$(get_latest_release "midoks/go-p2p-server")
 
 	TARGET_DIR="/usr/local/gop2p"
 }
@@ -31,7 +31,7 @@ func main() { fmt.Println(runtime.GOARCH) }" > /tmp/go_arch.go
 }
 
 get_download_url() {
-	DOWNLOAD_URL="https://github.com/midoks/gop2p/releases/download/$VERSION/gop2p_${VERSION}_${OS}_${ARCH}.tar.gz"
+	DOWNLOAD_URL="https://github.com/midoks/go-p2p-server/releases/download/$VERSION/gop2p_${VERSION}_${OS}_${ARCH}.tar.gz"
 }
 
 # download file

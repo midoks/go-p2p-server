@@ -2,7 +2,7 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 
 
-VERSION=1.0.0
+VERSION=0.9.9
 curPath=`pwd`
 rootPath=$(dirname "$curPath")
 
@@ -73,12 +73,12 @@ build_app(){
 			export CC=arm-linux-musleabi-gcc
 		fi
 
-		cd $rootPath && go build -ldflags "${LDFLAGS}" gop2p.go -o gop2p
+		cd $rootPath && go build -o gop2p -ldflags "${LDFLAGS}" gop2p.go 
 	fi
 
 	if [ $1 == "darwin" ]; then
 		echo "cd $rootPath && go build -v  -ldflags '${LDFLAGS}'"
-		cd $rootPath && go build -v -ldflags "${LDFLAGS}" -o gop2p
+		cd $rootPath && go build -o gop2p -v -ldflags "${LDFLAGS}" 
 	fi
 	
 
@@ -109,7 +109,7 @@ echo $golist
 # build_app linux 386
 # build_app linux arm64
 # build_app linux arm
-build_app darwin amd64
-# build_app windows 386
-# build_app windows amd64
+# build_app darwin amd64
+build_app windows 386
+build_app windows amd64
 
