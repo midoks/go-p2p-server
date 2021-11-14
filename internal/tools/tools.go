@@ -88,3 +88,13 @@ func CurrentUsername() string {
 	}
 	return username
 }
+
+// Contains 数组是否包含某元素
+func Contains(slice []string, s string) int {
+	for index, value := range slice {
+		if value == s {
+			return index
+		}
+	}
+	return -1
+}

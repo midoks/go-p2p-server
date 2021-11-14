@@ -1,8 +1,13 @@
 package queue
 
 import (
-	// "encoding/json"
+	"encoding/json"
 	"fmt"
+	"time"
+
+	"github.com/midoks/go-p2p-server/internal/hub"
+	"github.com/midoks/go-p2p-server/internal/logger"
+	"github.com/midoks/go-p2p-server/internal/tools"
 )
 
 type LatLang struct {
@@ -20,10 +25,16 @@ type MSliceMap []MSlice
 
 var (
 	ValChan chan MSliceMap
+
+	//Peers
+	PeerIds []string
 )
 
 func Init() {
 	ValChan = make(chan MSliceMap)
+	PeerIds = make([]string, 0)
+
+	go receive()
 }
 
 func PushText(action string, peer string, lat_from float64, lang_from float64, lat_to float64, lang_to float64) {
@@ -96,17 +107,38 @@ func PushTextLatLang(action string, val string) {
 }
 
 func Push(msg MSliceMap) {
-	fmt.Println("Push start")
 	ValChan <- msg
-	fmt.Println(msg)
-	fmt.Println("Push end")
 }
 
-func Receive() {
-
-	for {
-		data := <-ValChan
-		fmt.Println("queue", data)
+//注人
+func RegisterPeer(peer string) {
+	if tools.Contains(PeerIds, peer) < 0 {
+		PeerIds = append(PeerIds, peer)
 	}
+}
 
+//接收push信息,推送到客服端
+func receive() {
+	for {
+		select {
+		case data := <-ValChan:
+			b, err := json.Marshal(data)
+			if err != nil {
+				logger.Errorf("queue json error: %v", err)
+			} else {
+				for k, p := range PeerIds {
+
+					if cli, ok := hub.GetClient(p); ok {
+						err := cli.SendMessage(b)
+						if err != nil {
+							cli.Close()
+							PeerIds = append(PeerIds[:k], PeerIds[k+1:]...)
+						}
+					}
+				}
+			}
+		case <-time.After(3 * time.Second):
+			break
+		}
+	}
 }
