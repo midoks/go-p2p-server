@@ -15,6 +15,7 @@ import (
 )
 
 //go:generate go-bindata -nomemcopy -nometadata -pkg=public -ignore="\\.DS_Store|less" -prefix=../../../public -debug=false -o=public_gen.go ../../../public/...
+// go-bindata-assetfs -pkg=public -ignore="\\.DS_Store|less" -prefix=../../../public -o=public_gen.go ../../../public/...
 
 /*
 	This file is a modified version of https://github.com/go-bindata/go-bindata/pull/18.

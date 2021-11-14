@@ -2,13 +2,14 @@ package app
 
 import (
 	"fmt"
-	// "log"
+	"html/template"
 	"net/http"
-	"runtime"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/midoks/go-p2p-server/internal/announce"
+
+	"github.com/midoks/go-p2p-server/internal/assets/public"
+	"github.com/midoks/go-p2p-server/internal/assets/templates"
 	"github.com/midoks/go-p2p-server/internal/conf"
 	"github.com/midoks/go-p2p-server/internal/geoip"
 	"github.com/midoks/go-p2p-server/internal/hub"
@@ -79,24 +80,16 @@ func websocketConnCount(c *gin.Context) {
 
 func Run() {
 	r := gin.Default()
+
 	r.Use(httpCors())
 
-	r.Static("/public", "./public")
-	r.LoadHTMLGlob("templates/*")
+	r.StaticFS("/public", public.NewFileSystem())
 	r.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{"version": conf.App.Version})
-	})
-
-	r.GET("/t", func(c *gin.Context) {
-
-		lat, lng, err := announce.GetServerLatLang()
-		fmt.Println(lat, lng, err)
-
-		c.JSON(http.StatusOK, gin.H{
-			"gnum": runtime.NumGoroutine(),
-			"lat":  lat,
-			"lng":  lng,
-		})
+		c.Writer.WriteHeader(200)
+		indexByte, _ := templates.Asset("index.tmpl")
+		tmpl, _ := template.New("web").Parse(string(indexByte))
+		kv := gin.H{"version": conf.App.Version}
+		tmpl.Execute(c.Writer, kv)
 	})
 
 	r.GET("/getStats", p2pGetStats)
