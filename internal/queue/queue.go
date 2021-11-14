@@ -2,7 +2,6 @@ package queue
 
 import (
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/midoks/go-p2p-server/internal/hub"
