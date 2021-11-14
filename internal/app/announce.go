@@ -9,15 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/midoks/go-p2p-server/internal/announce"
-	// "github.com/midoks/go-p2p-server/internal/queue"
 	"github.com/midoks/go-p2p-server/internal/hub"
 	"github.com/midoks/go-p2p-server/internal/tools"
 	"github.com/midoks/go-p2p-server/internal/tools/uniqid"
 )
-
-func initAnnounce() {
-	announce.Init()
-}
 
 type AnPeer struct {
 	Id string `json:"id"`
@@ -28,7 +23,7 @@ var mu sync.RWMutex
 //接收announce信息
 func p2pChannel(c *gin.Context) {
 
-	postJson := make(map[string]interface{}) //注意该结构接受的内容
+	postJson := make(map[string]interface{})
 	c.BindJSON(&postJson)
 
 	uniqidId := uniqid.New(uniqid.Params{"", false})

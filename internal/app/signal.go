@@ -3,6 +3,7 @@ package app
 import (
 	"bytes"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -56,7 +57,11 @@ func wsSignal(c *gin.Context) {
 				to_lat, to_lang = 0, 0
 			}
 
-			queue.PushText("join", uniqidId, lat, lang, to_lat, to_lang)
+			if strings.HasPrefix(uniqidId, "p2p") {
+			} else {
+				queue.PushText("join", uniqidId, lat, lang, to_lat, to_lang)
+			}
+
 		}()
 	}()
 

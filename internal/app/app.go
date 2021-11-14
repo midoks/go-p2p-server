@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/midoks/go-p2p-server/internal/announce"
 	"github.com/midoks/go-p2p-server/internal/assets/public"
 	"github.com/midoks/go-p2p-server/internal/assets/templates"
 	"github.com/midoks/go-p2p-server/internal/conf"
@@ -39,6 +41,28 @@ func httpCors() gin.HandlerFunc {
 	}
 }
 
+func LoggerToFile() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		startTime := time.Now()
+		c.Next()
+		endTime := time.Now()
+		latencyTime := endTime.Sub(startTime)
+		reqMethod := c.Request.Method
+		reqUri := c.Request.RequestURI
+		statusCode := c.Writer.Status()
+		clientIP := c.ClientIP()
+
+		//日志格式
+		logger.Infof("| %3d | %10v | %15s | %s | %s |",
+			statusCode,
+			latencyTime,
+			clientIP,
+			reqMethod,
+			reqUri,
+		)
+	}
+}
+
 func init() {
 	conf.Init()
 	logger.Init()
@@ -47,7 +71,7 @@ func init() {
 	//App
 	queue.Init()
 	hub.Init()
-	initAnnounce()
+	announce.Init()
 
 	go func() {
 		for {
@@ -73,15 +97,22 @@ func init() {
 	}()
 }
 
-func websocketConnCount(c *gin.Context) {
-	// num := hub.GetClientNum()
-	c.String(http.StatusOK, fmt.Sprintf("%d", hub.GetClientNum()))
+func info(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"clinet_num": fmt.Sprintf("%d", hub.GetClientNum()),
+	})
 }
 
 func Run() {
-	r := gin.Default()
+	r := gin.New()
+
+	if strings.EqualFold(conf.App.RunMode, "prod") {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	r.Use(httpCors())
+	r.Use(LoggerToFile())
+	r.Use(gin.Recovery())
 
 	r.StaticFS("/public", public.BinaryFileSystem(""))
 	r.GET("/", func(c *gin.Context) {
@@ -93,7 +124,7 @@ func Run() {
 	})
 
 	r.GET("/getStats", p2pGetStats)
-	r.GET("/count", websocketConnCount)
+	r.GET("/info", info)
 
 	r.POST("/channel", p2pChannel)
 	r.POST("/channel/:channel_id/node/:peer/stats", p2pChannelStats)
