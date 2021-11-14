@@ -89,37 +89,14 @@ func Run() {
 	})
 
 	r.GET("/t", func(c *gin.Context) {
-		ip := "127.0.0.1"
-		if find_ip, err := tools.GetOutboundIP(); err == nil {
-			fmt.Println("ip:", ip)
-			ip = find_ip
-		} else {
-			fmt.Println("ip:", err)
-		}
-
-		ipAddr := c.ClientIP()
-		if ipAddr == "127.0.0.1" {
-			ipAddr = tools.GetNetworkIp()
-		}
-
-		fmt.Println("client", ipAddr)
-
-		lat, lang := geoip.GetLatLongByIpAddr("240e:398:380:7dd0:e1e5:bf1a:45ae:20e0")
-
-		fmt.Println(lat, lang)
-
-		ipNet := tools.GetNetworkIp()
 
 		lat, lng, err := announce.GetServerLatLang()
 		fmt.Println(lat, lng, err)
 
 		c.JSON(http.StatusOK, gin.H{
-			"gnum":      runtime.NumGoroutine(),
-			"ip":        ip,
-			"client_ip": ipAddr,
-			"net_ip":    ipNet,
-			"lat":       lat,
-			"lang":      lang,
+			"gnum": runtime.NumGoroutine(),
+			"lat":  lat,
+			"lang": lang,
 		})
 	})
 

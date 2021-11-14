@@ -1,13 +1,8 @@
 package app
 
 import (
-	"fmt"
-	// "log"
 	"bytes"
-	// "encoding/json"
 	"net/http"
-	// "runtime"
-	// "time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -33,7 +28,7 @@ var upGrader = websocket.Upgrader{
 func wsSignal(c *gin.Context) {
 
 	uniqidId := c.Query("id")
-	fmt.Println("websocket id:[", uniqidId, "]")
+	// fmt.Println("websocket id:[", uniqidId, "]")
 
 	//use webSocket pro
 	ws, err := upGrader.Upgrade(c.Writer, c.Request, nil)
@@ -46,6 +41,7 @@ func wsSignal(c *gin.Context) {
 	hub.DoRegister(clientId)
 
 	go func() {
+
 		ipAddr := c.ClientIP()
 		if ipAddr == "127.0.0.1" {
 			ipAddr = tools.GetNetworkIp()
@@ -54,8 +50,12 @@ func wsSignal(c *gin.Context) {
 		lat, lang := geoip.GetLatLongByIpAddr(ipAddr)
 		clientId.SetLatLong(lat, lang)
 
-		to_lat, to_lang, _ := announce.GetServerLatLang()
 		go func() {
+			to_lat, to_lang, err := announce.GetServerLatLang()
+			if err != nil {
+				to_lat, to_lang = 0, 0
+			}
+
 			queue.PushText("join", uniqidId, lat, lang, to_lat, to_lang)
 		}()
 	}()
