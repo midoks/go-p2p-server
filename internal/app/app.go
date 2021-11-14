@@ -13,7 +13,7 @@ import (
 	"github.com/midoks/go-p2p-server/internal/hub"
 	"github.com/midoks/go-p2p-server/internal/logger"
 	"github.com/midoks/go-p2p-server/internal/queue"
-	// "github.com/midoks/go-p2p-server/internal/tools"
+	"github.com/midoks/go-p2p-server/internal/tools"
 )
 
 const (
@@ -88,6 +88,13 @@ func Run() {
 	})
 
 	r.GET("/t", func(c *gin.Context) {
+
+		if ip, err := tools.GetOutboundIP(); err == nil {
+			fmt.Println("ip:", ip)
+		} else {
+			fmt.Println("ip:", err)
+		}
+
 		c.JSON(http.StatusOK, gin.H{
 			"gnum": runtime.NumGoroutine(),
 		})
