@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/midoks/go-p2p-server/internal/announce"
 	"github.com/midoks/go-p2p-server/internal/conf"
 	"github.com/midoks/go-p2p-server/internal/geoip"
 	"github.com/midoks/go-p2p-server/internal/hub"
@@ -108,6 +109,9 @@ func Run() {
 		fmt.Println(lat, lang)
 
 		ipNet := tools.GetNetworkIp()
+
+		lat, lng, err := announce.GetServerLatLang()
+		fmt.Println(lat, lng, err)
 
 		c.JSON(http.StatusOK, gin.H{
 			"gnum":      runtime.NumGoroutine(),

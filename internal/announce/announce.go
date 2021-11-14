@@ -1,10 +1,15 @@
 package announce
 
 import (
-	// "fmt"
+	"errors"
+	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-redis/redis"
+	"github.com/midoks/go-p2p-server/internal/geoip"
+	"github.com/midoks/go-p2p-server/internal/tools"
 )
 
 var rdb *redis.Client
@@ -93,4 +98,32 @@ func KeyCount(key string) int64 {
 		return count
 	}
 	return 0
+}
+
+func GetServerLatLang() (float64, float64, error) {
+	key := "go_p2p_server_ip_lat_lng"
+	if data, err := rdb.Get(key).Result(); err == nil {
+		ll := strings.Split(data, ",")
+
+		lat, err := strconv.ParseFloat(ll[0], 64)
+		if err != nil {
+			return 0, 0, err
+		}
+
+		lng, err := strconv.ParseFloat(ll[1], 64)
+		if err != nil {
+			return lat, 0, err
+		}
+
+		return lat, lng, nil
+	}
+
+	ip := tools.GetNetworkIp()
+	lat, lng := geoip.GetLatLongByIpAddr(ip)
+
+	_, err := rdb.Set(key, fmt.Sprintf("%f,%f", lat, lng), 600*time.Second).Result()
+	if err == nil {
+		return lat, lng, nil
+	}
+	return 0, 0, errors.New("not find lat lang")
 }

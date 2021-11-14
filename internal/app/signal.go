@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/midoks/go-p2p-server/internal/announce"
 	"github.com/midoks/go-p2p-server/internal/client"
 	"github.com/midoks/go-p2p-server/internal/conf"
 	"github.com/midoks/go-p2p-server/internal/geoip"
@@ -53,8 +54,9 @@ func wsSignal(c *gin.Context) {
 		lat, lang := geoip.GetLatLongByIpAddr(ipAddr)
 		clientId.SetLatLong(lat, lang)
 
+		to_lat, to_lang, _ := announce.GetServerLatLang()
 		go func() {
-			queue.PushText("join", uniqidId, lat, lang, -121.9829, 37.567)
+			queue.PushText("join", uniqidId, lat, lang, to_lat, to_lang)
 		}()
 	}()
 
