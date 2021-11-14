@@ -69,7 +69,8 @@ func wsSignal(c *gin.Context) {
 		for {
 			mt, message, err := ws.ReadMessage()
 			if err != nil {
-				logger.Errorf("path[ws][%s] error: %v", uniqidId, err)
+				hub.DoUnregister(uniqidId)
+				logger.Errorf("path[ws][%s] %v", uniqidId, err)
 				break
 			}
 			clientId.SetMT(mt)
@@ -77,9 +78,9 @@ func wsSignal(c *gin.Context) {
 			data := bytes.TrimSpace(bytes.Replace(message, []byte{'\n'}, []byte{' '}, -1))
 			hdr, err := handler.NewHandler(data, clientId)
 			if err != nil {
-				clientId.UpdateTs()
 				logger.Errorf("path[ws][%s] hander error: %v", uniqidId, err)
 			} else {
+				clientId.UpdateTs()
 				hdr.Handle()
 			}
 		}
