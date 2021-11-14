@@ -55,6 +55,7 @@ func wsSignal(c *gin.Context) {
 
 		to_lat, to_lang, err := announce.GetServerLatLang()
 		if err != nil {
+			logger.Errorf("announce.GetServerLatLang error: %v", err)
 			to_lat, to_lang = 0, 0
 		}
 
