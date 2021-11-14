@@ -88,15 +88,17 @@ func Run() {
 	})
 
 	r.GET("/t", func(c *gin.Context) {
-
-		if ip, err := tools.GetOutboundIP(); err == nil {
+		ip := "127.0.0.1"
+		if find_ip, err := tools.GetOutboundIP(); err == nil {
 			fmt.Println("ip:", ip)
+			ip = find_ip
 		} else {
 			fmt.Println("ip:", err)
 		}
 
 		c.JSON(http.StatusOK, gin.H{
 			"gnum": runtime.NumGoroutine(),
+			"ip":   ip,
 		})
 	})
 
