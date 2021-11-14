@@ -3,6 +3,7 @@ module github.com/midoks/go-p2p-server
 go 1.17
 
 require (
+	github.com/elazarl/go-bindata-assetfs v1.0.1
 	github.com/gin-gonic/gin v1.7.4
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/gorilla/websocket v1.4.2

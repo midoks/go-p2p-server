@@ -6,11 +6,14 @@ package public
 
 import (
 	"bytes"
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
+	assetfs "github.com/elazarl/go-bindata-assetfs"
 	"github.com/midoks/go-p2p-server/internal/assets"
 )
 
@@ -79,6 +82,7 @@ func (f *file) Readdir(count int) ([]os.FileInfo, error) {
 	}
 	offset := f.childrenOffset
 	f.childrenOffset += count
+
 	return f.children[offset : offset+count], nil
 }
 
@@ -90,6 +94,7 @@ func (f *file) Stat() (os.FileInfo, error) {
 			size: int64(childCount),
 		}, nil
 	}
+
 	return AssetInfo(f.name)
 }
 
@@ -97,19 +102,23 @@ func (f *file) Stat() (os.FileInfo, error) {
 type fileSystem struct{}
 
 func (f *fileSystem) Open(name string) (http.File, error) {
+
 	if len(name) > 0 && name[0] == '/' {
 		name = name[1:]
 	}
 
 	// Attempt to get it as a file
 	p, err := Asset(name)
+
 	if err != nil && !assets.IsErrNotFound(err) {
 		return nil, err
 	} else if err == nil {
-		return &file{
+		f := &file{
 			name:   name,
 			Reader: bytes.NewReader(p),
-		}, nil
+		}
+		fmt.Println(name, f)
+		return f, nil
 	}
 
 	// Attempt to get it as a directory
@@ -141,4 +150,28 @@ func (f *fileSystem) Open(name string) (http.File, error) {
 // NewFileSystem returns an http.FileSystem instance backed by embedded assets.
 func NewFileSystem() http.FileSystem {
 	return &fileSystem{}
+}
+
+type binaryFileSystem struct {
+	fs http.FileSystem
+}
+
+func (b *binaryFileSystem) Open(name string) (http.File, error) {
+	return b.fs.Open(name)
+}
+
+func (b *binaryFileSystem) Exists(prefix string, filepath string) bool {
+
+	if p := strings.TrimPrefix(filepath, prefix); len(p) < len(filepath) {
+		if _, err := b.fs.Open(p); err != nil {
+			return false
+		}
+		return true
+	}
+	return false
+}
+
+func BinaryFileSystem(root string) *binaryFileSystem {
+	fs := &assetfs.AssetFS{Asset, AssetDir, AssetInfo, root, "index.html"}
+	return &binaryFileSystem{fs}
 }
