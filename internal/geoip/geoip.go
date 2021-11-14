@@ -6,6 +6,7 @@ import (
 	// "net/http"
 
 	"github.com/midoks/go-p2p-server/internal/conf"
+	"github.com/midoks/go-p2p-server/internal/logger"
 	"github.com/oschwald/geoip2-golang"
 )
 
@@ -17,8 +18,11 @@ func Init() {
 
 func GetLatLongByIpAddr(ipAddr string) (float64, float64) {
 	ip := net.ParseIP(ipAddr)
+	record, err := geoIp.City(ip)
 
-	// fmt.Println("ip:", ip)
-	record, _ := geoIp.City(ip)
+	if err != nil {
+		logger.Errorf("geoip error: %v", err)
+		return 0, 0
+	}
 	return record.Location.Latitude, record.Location.Longitude
 }

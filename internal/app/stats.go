@@ -17,7 +17,13 @@ import (
 func p2pGetStats(c *gin.Context) {
 
 	//cpu
-	percent, _ := cpu.Percent(time.Second, false)
+	var cpu_per float64
+	percent, err := cpu.Percent(time.Second, true)
+	if err == nil {
+		cpu_per = percent[0]
+	} else {
+		cpu_per = 0
+	}
 
 	//load
 	info, _ := load.Avg()
@@ -38,7 +44,7 @@ func p2pGetStats(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"peers":          hub.GetClientNum(),
 		"load_avg_per":   info.Load1 / max,
-		"cpu_per":        percent[0],
+		"cpu_per":        cpu_per,
 		"mem_per":        memInfo.UsedPercent,
 		"goroutine_num":  runtime.NumGoroutine(),
 		"server_runtime": time.Now().Format("2006-01-02 15:04:05"),

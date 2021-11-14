@@ -84,7 +84,6 @@ func Run() {
 	r.Use(httpCors())
 
 	r.StaticFS("/public", public.BinaryFileSystem(""))
-
 	r.GET("/", func(c *gin.Context) {
 		c.Writer.WriteHeader(200)
 		indexByte, _ := templates.Asset("index.tmpl")

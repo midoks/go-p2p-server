@@ -8,7 +8,9 @@ import (
 	"time"
 
 	"github.com/go-redis/redis"
+	"github.com/midoks/go-p2p-server/internal/conf"
 	"github.com/midoks/go-p2p-server/internal/geoip"
+	"github.com/midoks/go-p2p-server/internal/logger"
 	"github.com/midoks/go-p2p-server/internal/tools"
 )
 
@@ -16,13 +18,14 @@ var rdb *redis.Client
 
 func Init() error {
 	rdb = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
+		Addr:     conf.Redis.Address,
+		Password: conf.Redis.Password, // no password set
+		DB:       conf.Redis.Bb,       // use default DB
 	})
 
 	_, err := rdb.Ping().Result()
 	if err != nil {
+		logger.Errorf("redis error: %v", err)
 		return err
 	}
 	return nil

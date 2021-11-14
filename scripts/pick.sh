@@ -2,7 +2,7 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 
 
-VERSION=0.0.1
+VERSION=1.0.0
 curPath=`pwd`
 rootPath=$(dirname "$curPath")
 
@@ -15,7 +15,7 @@ mkdir -p $rootPath/tmp/package
 source ~/.bash_profile
 
 cd $rootPath
-
+LDFLAGS='-w -s'
 echo $LDFLAGS
 build_app(){
 
@@ -36,7 +36,7 @@ build_app(){
 
 	export CGO_ENABLED=1 GOOS=$1 GOARCH=$2
 	# export CGO_ENABLED=1 GOOS=linux GOARCH=amd64
-	export CGO_LDFLAGS="-static"
+	#export CGO_LDFLAGS="-static"
 
 	if [ $1 == "windows" ];then
 		
@@ -73,18 +73,19 @@ build_app(){
 			export CC=arm-linux-musleabi-gcc
 		fi
 
-		cd $rootPath && go build -ldflags "${LDFLAGS}"  gop2p.go 
+		cd $rootPath && go build -ldflags "${LDFLAGS}" gop2p.go -o gop2p
 	fi
 
 	if [ $1 == "darwin" ]; then
 		echo "cd $rootPath && go build -v  -ldflags '${LDFLAGS}'"
-		cd $rootPath && go build -v -ldflags "${LDFLAGS}"
+		cd $rootPath && go build -v -ldflags "${LDFLAGS}" -o gop2p
 	fi
 	
 
 	cp -r $rootPath/scripts $rootPath/tmp/build
 	cp -r $rootPath/LICENSE $rootPath/tmp/build
 	cp -r $rootPath/README.md $rootPath/tmp/build
+	cp -r $rootPath/data $rootPath/tmp/build
 
 	cd $rootPath/tmp/build && xattr -c * && rm -rf ./*/.DS_Store && rm -rf ./*/*/.DS_Store
 

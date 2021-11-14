@@ -17,3 +17,5 @@ go-p2p-server
 vendor
 logs
 custom
+tmp
+gop2p
