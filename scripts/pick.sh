@@ -34,9 +34,9 @@ build_app(){
 	echo "export CGO_ENABLED=1 GOOS=$1 GOARCH=$2"
 	echo "cd $rootPath && go build gop2p.go"
 
-	export CGO_ENABLED=1 GOOS=$1 GOARCH=$2
+	export CGO_ENABLED=0 GOOS=$1 GOARCH=$2
 	# export CGO_ENABLED=1 GOOS=linux GOARCH=amd64
-	#export CGO_LDFLAGS="-static"
+	# export CGO_LDFLAGS="-static"
 
 	if [ $1 == "windows" ];then
 		
