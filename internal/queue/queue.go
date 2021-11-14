@@ -2,6 +2,7 @@ package queue
 
 import (
 	"encoding/json"
+	// "fmt"
 	"time"
 
 	"github.com/midoks/go-p2p-server/internal/hub"
@@ -116,27 +117,50 @@ func RegisterPeer(peer string) {
 	}
 }
 
+func receivePush(b []byte) {
+	for k, p := range PeerIds {
+
+		if cli, ok := hub.GetClient(p); ok {
+			err := cli.SendMessage(b)
+			if err != nil {
+				cli.Close()
+				PeerIds = append(PeerIds[:k], PeerIds[k+1:]...)
+			}
+		}
+	}
+}
+
 //接收push信息,推送到客服端
 func receive() {
+	tmp := make(MSliceMap, 0)
 	for {
 		select {
 		case data := <-ValChan:
-			b, err := json.Marshal(data)
-			if err != nil {
-				logger.Errorf("queue json error: %v", err)
-			} else {
-				for k, p := range PeerIds {
 
-					if cli, ok := hub.GetClient(p); ok {
-						err := cli.SendMessage(b)
-						if err != nil {
-							cli.Close()
-							PeerIds = append(PeerIds[:k], PeerIds[k+1:]...)
-						}
-					}
+			for _, v := range data {
+				tmp = append(tmp, v)
+			}
+
+			if len(tmp) > 99 {
+				b, err := json.Marshal(tmp)
+				if err != nil {
+					logger.Errorf("queue json error: %v", err)
+				} else {
+					receivePush(b)
+					tmp = make(MSliceMap, 0)
 				}
 			}
-		case <-time.After(3 * time.Second):
+		case <-time.After(300 * time.Millisecond):
+
+			if len(tmp) > 0 {
+				b, err := json.Marshal(tmp)
+				if err != nil {
+					logger.Errorf("queue json error: %v", err)
+				} else {
+					receivePush(b)
+					tmp = make(MSliceMap, 0)
+				}
+			}
 			break
 		}
 	}
