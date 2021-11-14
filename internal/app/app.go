@@ -14,7 +14,6 @@ import (
 	"github.com/midoks/go-p2p-server/internal/hub"
 	"github.com/midoks/go-p2p-server/internal/logger"
 	"github.com/midoks/go-p2p-server/internal/queue"
-	"github.com/midoks/go-p2p-server/internal/tools"
 )
 
 const (
@@ -60,7 +59,7 @@ func init() {
 				if cli.LocalNode && cli.IsExpired(now, EXPIRE_LIMIT) {
 					// 节点过期
 					info := fmt.Sprintf("client %s is expired for %d, close it", cli.PeerId, now-cli.Timestamp)
-					fmt.Println(info)
+					logger.Info(info)
 					if ok := hub.DoUnregister(cli.PeerId); ok {
 						queue.PushTextLeave(cli.PeerId)
 						cli.Close()
@@ -96,7 +95,7 @@ func Run() {
 		c.JSON(http.StatusOK, gin.H{
 			"gnum": runtime.NumGoroutine(),
 			"lat":  lat,
-			"lang": lang,
+			"lng":  lng,
 		})
 	})
 
