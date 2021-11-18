@@ -1,7 +1,7 @@
 # go-p2p-server
 Web P2P 服务器，依托[cdnbye](https://www.cdnbye.com)的源码和[klink.tech](https://klink.tech)页面而开发的服务器。
 
-# 测试地址
+# 应用地址
 - https://gop2p.cachecha.com
 
 ## 接入
