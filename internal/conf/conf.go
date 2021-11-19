@@ -54,6 +54,7 @@ func Init() error {
 
 		cfg.Section("web").Key("http_addr").SetValue("0.0.0.0")
 		cfg.Section("web").Key("http_port").SetValue("3030")
+		cfg.Section("web").Key("http_server_addr").SetValue("172.67.209.65")
 
 		cfg.Section("redis").Key("enable").SetValue("false")
 		cfg.Section("redis").Key("address").SetValue("127.0.0.1:6379")

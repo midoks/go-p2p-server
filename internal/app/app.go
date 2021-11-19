@@ -100,8 +100,6 @@ func init() {
 
 func info(c *gin.Context) {
 
-	fmt.Println("info", c)
-
 	m := hub.GetAllKey()
 	ipAddr := tools.GetNetworkIp()
 	lat, lang := geoip.GetLatLongByIpAddr("172.67.209.65")

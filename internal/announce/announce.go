@@ -11,7 +11,6 @@ import (
 	"github.com/midoks/go-p2p-server/internal/conf"
 	"github.com/midoks/go-p2p-server/internal/geoip"
 	"github.com/midoks/go-p2p-server/internal/logger"
-	"github.com/midoks/go-p2p-server/internal/tools"
 )
 
 var rdb *redis.Client
@@ -126,7 +125,7 @@ func GetServerLatLang() (float64, float64, error) {
 		return lat, lng, nil
 	}
 
-	ip := tools.GetNetworkIp()
+	ip := conf.Web.HttpServerAddr
 	lat, lng := geoip.GetLatLongByIpAddr(ip)
 
 	_, err := rdb.Set(key, fmt.Sprintf("%f,%f", lat, lng), 600*time.Second).Result()

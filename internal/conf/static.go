@@ -21,8 +21,9 @@ var (
 	}
 
 	Web struct {
-		HttpAddr string `ini:"http_addr"`
-		HttpPort string `ini:"http_port"`
+		HttpAddr       string `ini:"http_addr"`
+		HttpPort       string `ini:"http_port"`
+		HttpServerAddr string `ini:"http_server_addr"`
 	}
 
 	// log
