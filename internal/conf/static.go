@@ -37,6 +37,11 @@ var (
 		Address  string
 		Password string
 		Bb       int
+		Prefix   string
+	}
+
+	Mem struct {
+		CacheChannelTime int64
 	}
 
 	Geo struct {

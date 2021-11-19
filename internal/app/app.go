@@ -9,13 +9,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/midoks/go-p2p-server/internal/announce"
 	"github.com/midoks/go-p2p-server/internal/assets/public"
 	"github.com/midoks/go-p2p-server/internal/assets/templates"
 	"github.com/midoks/go-p2p-server/internal/conf"
 	"github.com/midoks/go-p2p-server/internal/geoip"
 	"github.com/midoks/go-p2p-server/internal/hub"
 	"github.com/midoks/go-p2p-server/internal/logger"
+	"github.com/midoks/go-p2p-server/internal/mem"
 	"github.com/midoks/go-p2p-server/internal/queue"
 	// "github.com/midoks/go-p2p-server/internal/tools"
 )
@@ -72,7 +72,10 @@ func init() {
 	//App
 	queue.Init()
 	hub.Init()
-	announce.Init()
+	err := mem.Init()
+	if err != nil {
+		logger.Errorf("init redis error[redis must have]: %v", err)
+	}
 
 	go func() {
 		for {
@@ -84,8 +87,7 @@ func init() {
 				cli := item.Val
 				if cli.LocalNode && cli.IsExpired(now, EXPIRE_LIMIT) {
 					// 节点过期
-					info := fmt.Sprintf("client %s is expired for %d, close it", cli.PeerId, now-cli.Timestamp)
-					logger.Info(info)
+					logger.Infof("client %s is expired for %d, close it", cli.PeerId, now-cli.Timestamp)
 					if ok := hub.DoUnregister(cli.PeerId); ok {
 						queue.PushTextLeave(cli.PeerId)
 						cli.Close()

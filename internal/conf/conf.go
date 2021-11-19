@@ -60,6 +60,7 @@ func Init() error {
 		cfg.Section("redis").Key("address").SetValue("127.0.0.1:6379")
 		cfg.Section("redis").Key("password").SetValue("")
 		cfg.Section("redis").Key("db").SetValue("0")
+		cfg.Section("redis").Key("prefix").SetValue("gp_")
 
 		cfg.Section("geo").Key("path").SetValue("data/GeoLite2-City.mmdb")
 

@@ -3,17 +3,16 @@ package app
 import (
 	"bytes"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/midoks/go-p2p-server/internal/announce"
 	"github.com/midoks/go-p2p-server/internal/client"
 	"github.com/midoks/go-p2p-server/internal/conf"
 	"github.com/midoks/go-p2p-server/internal/geoip"
 	"github.com/midoks/go-p2p-server/internal/handler"
 	"github.com/midoks/go-p2p-server/internal/hub"
 	"github.com/midoks/go-p2p-server/internal/logger"
+	"github.com/midoks/go-p2p-server/internal/mem"
 	"github.com/midoks/go-p2p-server/internal/queue"
 	"github.com/midoks/go-p2p-server/internal/tools"
 )
@@ -35,7 +34,7 @@ func wsSignal(c *gin.Context) {
 	ws, err := upGrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		logger.Errorf("ws fail: %v", err)
-		ws.Close()
+		// ws.Close()
 		return
 	}
 
@@ -53,22 +52,12 @@ func wsSignal(c *gin.Context) {
 		lat, lang := geoip.GetLatLongByIpAddr(ipAddr)
 		clientId.SetLatLong(lat, lang)
 
-		to_lat, to_lang, err := announce.GetServerLatLang()
-		if err != nil {
-			logger.Errorf("announce.GetServerLatLang error: %v", err)
-			to_lat, to_lang = 0, 0
-		}
-
-		if !strings.HasPrefix(uniqidId, "p2p") {
-			queue.PushText("join", uniqidId, lat, lang, to_lat, to_lang)
-		}
-
 		for {
 			mt, message, err := ws.ReadMessage()
 			if err != nil {
 				hub.DoUnregister(uniqidId)
 				queue.PushTextLeave(uniqidId)
-				announce.DelPeer(uniqidId)
+				mem.DelPeer(uniqidId)
 
 				// 主动关闭,非异常
 				// logger.Debugf("path[ws][%s] %v", uniqidId, err)

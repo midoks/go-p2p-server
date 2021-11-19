@@ -3,13 +3,17 @@ package app
 import (
 	// "fmt"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/midoks/go-p2p-server/internal/announce"
+	"github.com/midoks/go-p2p-server/internal/geoip"
 	"github.com/midoks/go-p2p-server/internal/hub"
+	"github.com/midoks/go-p2p-server/internal/logger"
+	"github.com/midoks/go-p2p-server/internal/mem"
+	"github.com/midoks/go-p2p-server/internal/queue"
 	"github.com/midoks/go-p2p-server/internal/tools"
 	"github.com/midoks/go-p2p-server/internal/tools/uniqid"
 )
@@ -32,16 +36,38 @@ func p2pChannel(c *gin.Context) {
 	gPeers := []AnPeer{}
 	if channel, ok := postJson["channel"]; ok {
 		key := channel.(string)
-		if peer, ok := announce.Get(key); ok {
+		if peer, ok := mem.GetChannel(key); ok {
 			for _, p := range peer {
-
 				gPeers = append(gPeers, AnPeer{Id: p})
 			}
-			announce.Set(key, uniqidId)
+			mem.SetChannel(key, uniqidId)
 		} else {
-			announce.Set(key, uniqidId)
+			mem.SetChannel(key, uniqidId)
 		}
 	}
+
+	go func() {
+
+		ipAddr := c.ClientIP()
+		if ipAddr == "127.0.0.1" {
+			ipAddr = tools.GetNetworkIp()
+		}
+
+		lat, lng := geoip.GetLatLongByIpAddr(ipAddr)
+		//客服端经纬度->保存到redis
+		mem.SetPeerLatLang(uniqidId, lat, lng)
+
+		to_lat, to_lng, err := mem.GetServerLatLang()
+		if err != nil {
+			logger.Errorf("announce.GetServerLatLang error: %v", err)
+			to_lat, to_lng = 0, 0
+		}
+
+		if !strings.HasPrefix(uniqidId, "p2p") {
+			queue.PushText("join", uniqidId, lat, lng, to_lat, to_lng)
+		}
+
+	}()
 
 	c.JSON(http.StatusOK, gin.H{
 		"ret": 0,
@@ -65,13 +91,13 @@ func p2pChannelPeers(c *gin.Context) {
 
 	gPeers := []AnPeer{}
 	key := channel_id
-	if peer, ok := announce.Get(key); ok {
+	if peer, ok := mem.GetChannel(key); ok {
 		for _, p := range peer {
 			gPeers = append(gPeers, AnPeer{Id: p})
 		}
 	}
 
-	announce.SetPeerHeartbeat(peers, 60*time.Second)
+	mem.SetPeerHeartbeat(peers, 60*time.Second)
 
 	c.JSON(http.StatusOK, gin.H{
 		"ret": 0,
@@ -93,7 +119,7 @@ func p2pChannelStats(c *gin.Context) {
 	peers := c.Param("peer")
 
 	//延长缓冲时间
-	announce.SetPeerHeartbeat(peers, 60*time.Second)
+	mem.SetPeerHeartbeat(peers, 60*time.Second)
 	if c, ok := hub.GetClient(peers); ok {
 		c.UpdateTs()
 	}
@@ -101,7 +127,7 @@ func p2pChannelStats(c *gin.Context) {
 	//查找缓冲中的peer
 	gPeers := []AnPeer{}
 	key := channel_id
-	if peer, ok := announce.Get(key); ok {
+	if peer, ok := mem.GetChannel(key); ok {
 		for _, p := range peer {
 			gPeers = append(gPeers, AnPeer{Id: p})
 		}
