@@ -100,11 +100,14 @@ func init() {
 
 func info(c *gin.Context) {
 	m := hub.GetAllKey()
-	ip := tools.GetNetworkIp()
+	ipAddr := tools.GetNetworkIp()
+	lat, lang := geoip.GetLatLongByIpAddr(ipAddr)
 	c.JSON(http.StatusOK, gin.H{
 		"cliett_num": fmt.Sprintf("%d", hub.GetClientNum()),
 		"peers":      m,
-		"ip":         ip,
+		"ip":         ipAddr,
+		"lat":        lat,
+		"lang":       lang,
 	})
 }
 
