@@ -42,8 +42,7 @@ type IPLocate struct {
 	ISP     string  `json:"ISP"`
 }
 
-func GetNetworkIp() string {
-
+func GetNetworkIPv4() string {
 	conn, err := http.Get("https://ipv4.ipw.cn/api/ip/locate")
 	if err != nil {
 		return "127.0.0.1"
@@ -58,6 +57,35 @@ func GetNetworkIp() string {
 	}
 	ip := ipLocateResult.IP
 	return ip
+}
+
+func GetNetworkIp() string {
+	ip, err := GetLocalIP()
+	if err != nil {
+		return "127.0.0.1"
+	}
+	return ip
+}
+
+func GetLocalIP() (ip string, err error) {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return "127.0.0.1", err
+	}
+	for _, addr := range addrs {
+		ipAddr, ok := addr.(*net.IPNet)
+		if !ok {
+			continue
+		}
+		if ipAddr.IP.IsLoopback() {
+			continue
+		}
+		if !ipAddr.IP.IsGlobalUnicast() {
+			continue
+		}
+		return ipAddr.IP.String(), nil
+	}
+	return "127.0.0.1", err
 }
 
 func RandId() string {

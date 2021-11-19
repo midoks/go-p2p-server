@@ -17,6 +17,7 @@ import (
 	"github.com/midoks/go-p2p-server/internal/hub"
 	"github.com/midoks/go-p2p-server/internal/logger"
 	"github.com/midoks/go-p2p-server/internal/queue"
+	"github.com/midoks/go-p2p-server/internal/tools"
 )
 
 const (
@@ -99,9 +100,11 @@ func init() {
 
 func info(c *gin.Context) {
 	m := hub.GetAllKey()
+	ip := tools.GetNetworkIp()
 	c.JSON(http.StatusOK, gin.H{
 		"cliett_num": fmt.Sprintf("%d", hub.GetClientNum()),
 		"peers":      m,
+		"ip":         ip,
 	})
 }
 
