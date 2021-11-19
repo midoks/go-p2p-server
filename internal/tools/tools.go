@@ -43,7 +43,12 @@ type IPLocate struct {
 }
 
 func GetNetworkIp() string {
+
 	conn, err := http.Get("https://ipv4.ipw.cn/api/ip/locate")
+	if err != nil {
+		return "127.0.0.1"
+	}
+
 	defer conn.Body.Close()
 	body, _ := ioutil.ReadAll(conn.Body)
 	var ipLocateResult IPLocate
