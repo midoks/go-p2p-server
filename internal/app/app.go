@@ -115,6 +115,7 @@ func info(c *gin.Context) {
 		"lat":        lat,
 		"lang":       lang,
 		"latlng": gin.H{
+			"flatlng", m[0],
 			"latlng": latlng,
 			"err":    err,
 		},
