@@ -11,6 +11,7 @@ import (
 	"github.com/midoks/go-p2p-server/internal/conf"
 	"github.com/midoks/go-p2p-server/internal/geoip"
 	"github.com/midoks/go-p2p-server/internal/logger"
+	"github.com/midoks/go-p2p-server/internal/tools"
 )
 
 var rdb *redis.Client
@@ -170,17 +171,61 @@ func CheckAllGeoValue() {
 func PosGeo(label string) (float64, float64, error) {
 	_key := getPrefixKey(PEER_GEO_NAME)
 	resPos, err := rdb.GeoPos(_key, label).Result()
+
+	if err != nil {
+		return 0, 0, err
+	}
+
 	for _, v := range resPos {
 		return v.Latitude, v.Longitude, nil
 	}
 	return 0, 0, err
 }
 
-//
-func QueryGeo(label string, dist float64, count int) {
+//获取附近数据|自动重复查找
+func QueryGeoList(label string, count int) ([]redis.GeoLocation, error) {
+	equatorialCircumference := 40075.02 / 2
+	maxQueryTimes := 4
+	multiple := 10
+	x := tools.GetXForEc(equatorialCircumference, maxQueryTimes, multiple)
+
+	retData := []redis.GeoLocation{}
+
+	for i := 0; i < maxQueryTimes; i++ {
+		r, err := QueryGeo(label, tools.GetXForEcIncr(x, i, multiple), count+1)
+
+		if err != nil {
+			continue
+		}
+
+		if len(r) == 0 {
+			continue
+		}
+
+		for _, v := range r {
+			fmt.Println(v)
+			if !strings.EqualFold(label, v.Name) {
+				retData = append(retData, v)
+			}
+		}
+
+		if len(retData) > 0 {
+			return retData, nil
+		}
+
+		return retData, errors.New("data is empty!")
+	}
+
+	return []redis.GeoLocation{}, errors.New("not find geo data!")
+}
+
+//获取附近数据
+func QueryGeo(label string, dist float64, count int) ([]redis.GeoLocation, error) {
 	_key := getPrefixKey(PEER_GEO_NAME)
 	lat, lng, err := PosGeo(label)
-	fmt.Println(lat, lng, err)
+	if err != nil {
+		return []redis.GeoLocation{}, err
+	}
 
 	resRadiu, err := rdb.GeoRadius(_key, lng, lat, &redis.GeoRadiusQuery{
 		Radius:      dist,  //radius表示范围距离
@@ -192,7 +237,7 @@ func QueryGeo(label string, dist float64, count int) {
 		Sort:        "ASC", //默认结果是未排序的，传入ASC为从近到远排序，传入DESC为从远到近排序
 	}).Result()
 
-	fmt.Println(resRadiu, err)
+	return resRadiu, err
 }
 
 func AddGeo(label string, lat float64, lng float64) error {

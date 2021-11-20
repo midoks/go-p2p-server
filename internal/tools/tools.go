@@ -143,3 +143,20 @@ func GetOutboundIP() (string, error) {
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 	return localAddr.IP.String(), nil
 }
+
+//获取
+func GetXForEc(ec float64, times int, multiple int) float64 {
+	count := 1
+	for i := 1; i <= times; i++ {
+		count += (i - 1) * multiple * count
+	}
+	return ec / float64(count)
+}
+
+func GetXForEcIncr(x float64, times int, multiple int) float64 {
+	count := 1
+	for i := 1; i <= times; i++ {
+		count += (i - 1) * multiple * count
+	}
+	return float64(count) * x
+}

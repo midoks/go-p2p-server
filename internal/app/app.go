@@ -105,12 +105,19 @@ func info(c *gin.Context) {
 	m := hub.GetAllKey()
 	ipAddr := conf.Web.HttpServerAddr
 	lat, lang := geoip.GetLatLongByIpAddr(ipAddr)
+
+	latlng, err := mem.QueryGeoList(m[0], 6)
+
 	c.JSON(http.StatusOK, gin.H{
 		"client_num": fmt.Sprintf("%d", hub.GetClientNum()),
 		"peers":      m,
 		"ip":         ipAddr,
 		"lat":        lat,
 		"lang":       lang,
+		"latlng": gin.H{
+			"latlng": latlng,
+			"err":    err,
+		},
 	})
 }
 

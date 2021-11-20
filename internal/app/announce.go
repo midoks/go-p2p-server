@@ -124,9 +124,6 @@ func p2pChannelStats(c *gin.Context) {
 		c.UpdateTs()
 	}
 
-	// mem.PosGeo(peers)
-	mem.QueryGeo(peers, 1, 6)
-
 	//查找缓冲中的peer
 	gPeers := []AnPeer{}
 	key := channel_id
