@@ -122,12 +122,19 @@ func info(c *gin.Context) {
 
 	}
 
+	redisDesc := "started"
+	err := mem.Ping()
+	if err != nil {
+		redisDesc = "stoped"
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"client_num": fmt.Sprintf("%d", hub.GetClientNum()),
 		"peers":      m,
 		"ip":         ipAddr,
 		"lat":        lat,
 		"lang":       lang,
+		"redis":      redisDesc,
 		"latlng": gin.H{
 			"dict": dict,
 		},

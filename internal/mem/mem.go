@@ -46,6 +46,11 @@ func check() {
 	}
 }
 
+func Ping() error {
+	_, err := rdb.Ping().Result()
+	return err
+}
+
 func getPrefixKey(key string) string {
 	return fmt.Sprintf("%s%s", conf.Redis.Prefix, key)
 }
