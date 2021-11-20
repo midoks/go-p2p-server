@@ -176,6 +176,11 @@ func PosGeo(label string) (float64, float64, error) {
 	}
 
 	for _, v := range resPos {
+
+		if v == nil {
+			return 0, 0, errors.New("posgeo no has data!")
+		}
+
 		return v.Latitude, v.Longitude, nil
 	}
 	return 0, 0, err
@@ -192,7 +197,6 @@ func QueryGeoList(label string, count int) ([]redis.GeoLocation, error) {
 
 	for i := 0; i < maxQueryTimes; i++ {
 		r, err := QueryGeo(label, tools.GetXForEcIncr(x, i, multiple), count+1)
-
 		if err != nil {
 			continue
 		}
@@ -202,7 +206,6 @@ func QueryGeoList(label string, count int) ([]redis.GeoLocation, error) {
 		}
 
 		for _, v := range r {
-			fmt.Println(v)
 			if !strings.EqualFold(label, v.Name) {
 				retData = append(retData, v)
 			}
