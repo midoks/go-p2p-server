@@ -171,7 +171,6 @@ func CheckAllGeoValue() {
 func PosGeo(label string) (float64, float64, error) {
 	_key := getPrefixKey(PEER_GEO_NAME)
 	resPos, err := rdb.GeoPos(_key, label).Result()
-
 	if err != nil {
 		return 0, 0, err
 	}
@@ -209,11 +208,12 @@ func QueryGeoList(label string, count int) ([]redis.GeoLocation, error) {
 			}
 		}
 
-		if len(retData) > 0 {
-			return retData, nil
+		if len(retData) == 0 {
+			return retData, errors.New("data is empty!")
+
 		}
 
-		return retData, errors.New("data is empty!")
+		return retData, nil
 	}
 
 	return []redis.GeoLocation{}, errors.New("not find geo data!")

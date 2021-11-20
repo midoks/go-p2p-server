@@ -106,7 +106,21 @@ func info(c *gin.Context) {
 	ipAddr := conf.Web.HttpServerAddr
 	lat, lang := geoip.GetLatLongByIpAddr(ipAddr)
 
-	latlng, err := mem.QueryGeoList(m[0], 6)
+	// var dict map[string]interface{}
+	dict := make(map[string]interface{})
+	if len(m) > 0 {
+		f := c.Query("peer")
+
+		latlng, err := mem.QueryGeoList(m[0], 6)
+		if !strings.EqualFold(f, "") {
+			latlng, err = mem.QueryGeoList(f, 6)
+		}
+
+		// fmt.Println("m:", m, latlng, err)
+		dict["latlng"] = latlng
+		dict["err"] = err
+
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"client_num": fmt.Sprintf("%d", hub.GetClientNum()),
@@ -115,9 +129,7 @@ func info(c *gin.Context) {
 		"lat":        lat,
 		"lang":       lang,
 		"latlng": gin.H{
-			"flatlng", m[0],
-			"latlng": latlng,
-			"err":    err,
+			"dict": dict,
 		},
 	})
 }
