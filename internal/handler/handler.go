@@ -11,9 +11,9 @@ type Handler interface {
 
 type SignalMsg struct {
 	Action   string      `json:"action"`
-	ToPeerId string      `json:"to_peer_id"`
-	Data     interface{} `json:"data"`
-	Reason   string      `json:"reason"`
+	ToPeerId string      `json:"to_peer_id,omitempty"`
+	Data     interface{} `json:"data,omitempty"`
+	Reason   string      `json:"reason,omitempty"`
 }
 
 type SignalResp struct {
@@ -38,7 +38,7 @@ func NewHandlerMsg(signal SignalMsg, cli *client.Client) (Handler, error) {
 	case "ping":
 		return &HeartbeatHandler{Cli: cli}, nil
 	case "tranx":
-		return &TranxHandler{Cli: cli}, nil
+		return &TranxHandler{Msg: &signal, Cli: cli}, nil
 	case "reject":
 		return &RejectHandler{Msg: &signal, Cli: cli}, nil
 	case "get_stat":

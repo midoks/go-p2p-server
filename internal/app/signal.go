@@ -8,7 +8,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/midoks/go-p2p-server/internal/client"
 	"github.com/midoks/go-p2p-server/internal/conf"
-	"github.com/midoks/go-p2p-server/internal/geoip"
 	"github.com/midoks/go-p2p-server/internal/handler"
 	"github.com/midoks/go-p2p-server/internal/hub"
 	"github.com/midoks/go-p2p-server/internal/logger"
@@ -42,39 +41,33 @@ func wsSignal(c *gin.Context) {
 	clientId.SendMsgVersion(tools.GetVersionNum(conf.App.Version))
 	hub.DoRegister(clientId)
 
-	go func() {
+	ipAddr := c.ClientIP()
+	if ipAddr == "127.0.0.1" {
+		ipAddr = tools.GetNetworkIp()
+	}
 
-		ipAddr := c.ClientIP()
-		if ipAddr == "127.0.0.1" {
-			ipAddr = tools.GetNetworkIp()
+	for {
+		mt, message, err := ws.ReadMessage()
+		if err != nil {
+			hub.DoUnregister(uniqidId)
+			queue.PushTextLeave(uniqidId)
+			mem.DelPeer(uniqidId)
+			mem.DelGeo(uniqidId)
+
+			// 主动关闭,非异常
+			// logger.Debugf("path[ws][%s] %v", uniqidId, err)
+			break
 		}
+		clientId.SetMT(mt)
 
-		lat, lang := geoip.GetLatLongByIpAddr(ipAddr)
-		clientId.SetLatLong(lat, lang)
-
-		for {
-			mt, message, err := ws.ReadMessage()
-			if err != nil {
-				hub.DoUnregister(uniqidId)
-				queue.PushTextLeave(uniqidId)
-				mem.DelPeer(uniqidId)
-				mem.DelGeo(uniqidId)
-
-				// 主动关闭,非异常
-				// logger.Debugf("path[ws][%s] %v", uniqidId, err)
-				break
-			}
-			clientId.SetMT(mt)
-
-			data := bytes.TrimSpace(bytes.Replace(message, []byte{'\n'}, []byte{' '}, -1))
-			hdr, err := handler.NewHandler(data, clientId)
-			if err != nil {
-				logger.Errorf("path[ws][%s] hander error: %v", uniqidId, err)
-			} else {
-				clientId.UpdateTs()
-				hdr.Handle()
-			}
+		data := bytes.TrimSpace(bytes.Replace(message, []byte{'\n'}, []byte{' '}, -1))
+		hdr, err := handler.NewHandler(data, clientId)
+		if err != nil {
+			logger.Errorf("path[ws][%s] hander error: %v", uniqidId, err)
+		} else {
+			clientId.UpdateTs()
+			hdr.Handle()
 		}
+	}
 
-	}()
 }

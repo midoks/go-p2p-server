@@ -5,6 +5,7 @@ import (
 
 	"github.com/midoks/go-p2p-server/internal/client"
 	"github.com/midoks/go-p2p-server/internal/hub"
+	"github.com/midoks/go-p2p-server/internal/mem"
 	"github.com/midoks/go-p2p-server/internal/queue"
 )
 
@@ -45,8 +46,18 @@ func (s *SignalHandler) Handle() {
 			hub.SendJsonToClient(s.Cli, notFounResp)
 			// }
 
+			flat, flng, err := mem.PosGeo(s.Cli.PeerId)
+			if err != nil {
+				return
+			}
+
+			tlat, tlng, err := mem.PosGeo(target.PeerId)
+			if err != nil {
+				return
+			}
+
 			//消息通知
-			queue.PushConnection("connection", s.Cli.Latitude, s.Cli.Longitude, target.Latitude, target.Longitude)
+			queue.PushConnection("connection", flat, flng, tlat, tlng)
 		}
 		//if !target.(*client.Client).LocalNode {
 		//	log.Warnf("send signal msg from %s to %s on node %s", s.Cli.PeerId, s.Msg.ToPeerId, target.(*client.Client).RpcNodeAddr)

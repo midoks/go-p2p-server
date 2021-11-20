@@ -1,8 +1,10 @@
 package handler
 
 import (
+	// "fmt"
+
 	"github.com/midoks/go-p2p-server/internal/client"
-	"github.com/midoks/go-p2p-server/internal/hub"
+	"github.com/midoks/go-p2p-server/internal/mem"
 	"github.com/midoks/go-p2p-server/internal/queue"
 )
 
@@ -15,14 +17,14 @@ func (s *TranxHandler) Handle() {
 
 	toPeerId := s.Msg.ToPeerId
 
-	if c, ok := hub.GetClient(toPeerId); ok {
-		lat := s.Cli.Latitude
-		long := s.Cli.Longitude
-
-		to_lat := c.Latitude
-		to_long := c.Longitude
-
-		queue.PushConnection("connection", lat, long, to_lat, to_long)
+	flat, flng, err := mem.PosGeo(s.Cli.PeerId)
+	if err != nil {
+		return
 	}
+	tlat, tlng, err := mem.PosGeo(toPeerId)
+	if err != nil {
+		return
+	}
+	queue.PushConnection("connection", flat, flng, tlat, tlng)
 
 }
