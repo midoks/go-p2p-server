@@ -39,6 +39,9 @@ func check() {
 		time.Sleep(10 * time.Second)
 		//TODO
 		// fmt.Println("check..")
+
+		//GEO数据管理
+		CheckAllGeoValue()
 	}
 }
 
@@ -115,7 +118,7 @@ func SetPeerLatLang(key string, lat, lng float64) error {
 	if err != nil {
 		return err
 	}
-	GetAllGeoValue()
+
 	AddGeo(key, lat, lng)
 	return nil
 }
@@ -144,14 +147,52 @@ func GetChannelCount(key string) int64 {
 	return 0
 }
 
-func GetAllGeoValue() {
+func CheckAllGeoValue() {
 	_key := getPrefixKey(PEER_GEO_NAME)
-	r, err := rdb.ZRange(_key, 0, -1).Result()
+	r, _ := rdb.ZRange(_key, 0, -1).Result()
 
-	for k, v := range r {
-		fmt.Println("GetAllGeoValue:", k, v)
+	//删除过期GEO数据
+	for _, k := range r {
+		_peer := getPrefixKey(k)
+		_, err := rdb.Get(_peer).Result()
+		if err != nil {
+			err := DelGeo(k)
+			fmt.Println("CheckAllGeoValue:", k, _peer, err)
+		}
 	}
-	fmt.Println("GetAllGeoValue:", r, err)
+}
+
+//////////////////////////////////////////////////
+//https://studygolang.com/articles/27275?fr=sidebar
+/////////////////////////////////////////////////
+// GEO方法实现
+
+func PosGeo(label string) (float64, float64, error) {
+	_key := getPrefixKey(PEER_GEO_NAME)
+	resPos, err := rdb.GeoPos(_key, label).Result()
+	for _, v := range resPos {
+		return v.Latitude, v.Longitude, nil
+	}
+	return 0, 0, err
+}
+
+//
+func QueryGeo(label string, dist float64, count int) {
+	_key := getPrefixKey(PEER_GEO_NAME)
+	lat, lng, err := PosGeo(label)
+	fmt.Println(lat, lng, err)
+
+	resRadiu, err := rdb.GeoRadius(_key, lng, lat, &redis.GeoRadiusQuery{
+		Radius:      dist,  //radius表示范围距离
+		Unit:        "km",  //距离单位是 m|km|ft|mi
+		WithCoord:   true,  //传入WITHCOORD参数，则返回结果会带上匹配位置的经纬度
+		WithDist:    true,  //传入WITHDIST参数，则返回结果会带上匹配位置与给定地理位置的距离
+		WithGeoHash: true,  //传入WITHHASH参数，则返回结果会带上匹配位置的hash值
+		Count:       count, //入COUNT参数，可以返回指定数量的结果
+		Sort:        "ASC", //默认结果是未排序的，传入ASC为从近到远排序，传入DESC为从远到近排序
+	}).Result()
+
+	fmt.Println(resRadiu, err)
 }
 
 func AddGeo(label string, lat float64, lng float64) error {

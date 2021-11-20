@@ -58,6 +58,7 @@ func wsSignal(c *gin.Context) {
 				hub.DoUnregister(uniqidId)
 				queue.PushTextLeave(uniqidId)
 				mem.DelPeer(uniqidId)
+				mem.DelGeo(uniqidId)
 
 				// 主动关闭,非异常
 				// logger.Debugf("path[ws][%s] %v", uniqidId, err)
