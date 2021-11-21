@@ -98,6 +98,9 @@ func p2pChannelPeers(c *gin.Context) {
 	}
 
 	mem.SetPeerHeartbeat(peers, 60*time.Second)
+	if c, ok := hub.GetClient(peers); ok {
+		c.UpdateTs()
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"ret": 0,
