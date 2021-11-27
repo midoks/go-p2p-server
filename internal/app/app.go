@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	CHECK_CLIENT_INTERVAL = 10
+	CHECK_CLIENT_INTERVAL = 15
 	EXPIRE_LIMIT          = 100
 )
 

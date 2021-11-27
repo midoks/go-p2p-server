@@ -90,8 +90,7 @@ func p2pChannelPeers(c *gin.Context) {
 	peers := c.Param("peer")
 
 	gPeers := []AnPeer{}
-	key := channel_id
-	if peer, ok := mem.GetChannel(key); ok {
+	if peer, ok := mem.GetChannel(channel_id); ok {
 		for _, p := range peer {
 			gPeers = append(gPeers, AnPeer{Id: p})
 		}
@@ -129,12 +128,23 @@ func p2pChannelStats(c *gin.Context) {
 
 	//查找缓冲中的peer
 	gPeers := []AnPeer{}
-	key := channel_id
-	if peer, ok := mem.GetChannel(key); ok {
+	if peer, ok := mem.GetChannel(channel_id); ok {
 		for _, p := range peer {
 			gPeers = append(gPeers, AnPeer{Id: p})
 		}
 	}
+
+	// if !strings.HasPrefix(peers, "p2p") {
+	// 	ipAddr := c.ClientIP()
+	// 	if ipAddr == "127.0.0.1" {
+	// 		ipAddr = tools.GetNetworkIp()
+	// 	}
+
+	// 	lat, lng := geoip.GetLatLongByIpAddr(ipAddr)
+	// 	to_lat, to_lng, _ := mem.GetServerLatLang()
+
+	// 	queue.PushText("join", peers, lat, lng, to_lat, to_lng)
+	// }
 
 	c.JSON(http.StatusOK, gin.H{
 		"ret":   0,
