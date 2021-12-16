@@ -21,8 +21,8 @@ import (
 )
 
 const (
-	CHECK_CLIENT_INTERVAL = 15
-	EXPIRE_LIMIT          = 100
+	CHECK_CLIENT_INTERVAL = 180
+	EXPIRE_LIMIT          = 300
 )
 
 func httpCors() gin.HandlerFunc {
