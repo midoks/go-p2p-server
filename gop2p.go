@@ -31,5 +31,6 @@ func main() {
 		fmt.Println("Failed to start application: %v", err)
 	}
 
+	// debug
 	// cmd.RunService(nil)
 }

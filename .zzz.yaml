@@ -20,5 +20,5 @@ action:
   - go generate internal/assets/public/public.go
   - go generate internal/assets/templates/templates.go
   after:
-  - echo "zzz end"
+  - ps -ef|grep 'go-p2p-server service'| grep -v grep | awk '{print $2}' | xargs kill -9  && ./go-p2p-server service &
 link: https://github.com/midoks/zzz
